@@ -1,3 +1,7 @@
+# THIS PACKAGE IS NO LONGER MAINTAINED - PLEASE SEE [STORJSHARE-DAEMON](https://github.com/Storj/storjshare-daemon)
+
+---
+
 Storj Share CLI
 ===============
 
