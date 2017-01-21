@@ -1,0 +1,82 @@
+{
+  "name": "storj-bridge",
+  "version": "4.3.2",
+  "description": "Access the Storj network using a simple REST API.",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "bin": {
+    "storj-bridge": "bin/storj-bridge.js",
+    "storj-monitor": "bin/storj-monitor.js"
+  },
+  "scripts": {
+    "testsuite": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test _mocha --recursive test/**",
+    "coverage": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive",
+    "linter": "./node_modules/.bin/jshint --config .jshintrc ./index.js ./lib ./test",
+    "test": "npm run testsuite && npm run linter",
+    "develop": "STORJ_ALLOW_LOOPBACK=1 NODE_ENV=develop node script/develop.js start",
+    "make-docs": "./node_modules/.bin/jsdoc index.js lib -r -R README.md -u ./doc -c .jsdoc.json --verbose -d ./jsdoc",
+    "publish-docs": "gh-pages -d jsdoc --repo git@github.com:Storj/bridge.git",
+    "payout-report": "node script/payouts.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Storj/bridge.git"
+  },
+  "keywords": [
+    "storj",
+    "bridge"
+  ],
+  "author": {
+    "name": "Gordon Hall",
+    "email": "gordon@storj.io"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Storj/bridge/issues"
+  },
+  "homepage": "https://github.com/Storj/bridge#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "coveralls": "^2.11.6",
+    "ink-docstrap": "boshevski/docstrap",
+    "istanbul": "^0.4.1",
+    "jsdoc": "^3.4.0",
+    "jshint": "2.8.0",
+    "memdown": "^1.1.2",
+    "mocha": "^2.3.4",
+    "node-mocks-http": "^1.5.4",
+    "noisegen": "^1.0.0",
+    "proxyquire": "^1.7.10",
+    "rimraf": "^2.5.3",
+    "sinon": "^1.17.2"
+  },
+  "dependencies": {
+    "async": "^2.1.4",
+    "commander": "^2.9.0",
+    "cors": "^2.7.1",
+    "csv-write-stream": "^2.0.0",
+    "elliptic": "^6.0.2",
+    "express": "^4.13.3",
+    "handlebars": "^4.0.5",
+    "hat": "0.0.3",
+    "kad-logger-json": "^0.1.2",
+    "knuth-shuffle": "^1.0.1",
+    "merge": "^1.2.0",
+    "mime-db": "^1.22.0",
+    "ms": "^0.7.1",
+    "nodemailer": "^2.0.0",
+    "rc": "^1.1.6",
+    "readable-stream": "^2.0.5",
+    "storj-complex": "^4.0.0",
+    "storj-lib": "^6.0.12",
+    "storj-mongodb-adapter": "^6.0.0",
+    "storj-service-error-types": "^1.1.0",
+    "storj-service-mailer": "^1.0.0",
+    "storj-service-middleware": "^1.2.1",
+    "storj-service-storage-models": "^7.0.0",
+    "through": "^2.3.8"
+  }
+}
