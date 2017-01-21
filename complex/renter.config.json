@@ -1,0 +1,28 @@
+{
+  "type": "Renter",
+  "opts": {
+    "logLevel": 3,
+    "amqpUrl": "amqp://mq",
+    "amqpOpts": {},
+    "mongoUrl": "mongodb://db:27017/storj-sandbox",
+    "mongoOpts": {},
+    "networkPrivateExtendedKey": "/root/hd-private.key",
+    "networkIndex": 1,
+    "totalRenters": 1,
+    "renterOverlap": 0,
+    "networkOpts": {
+      "rpcPort": 4000,
+      "rpcAddress": "{{ IP_ADDRESS }}",
+      "doNotTraverseNat": true,
+      "tunnelServerPort": 5000,
+      "tunnelGatewayRange": {
+        "min": 0,
+        "max": 0
+      },
+      "maxTunnels": 0,
+      "seedList": [],
+      "bridgeUri": null,
+      "maxConnections": 250
+    }
+  }
+}
