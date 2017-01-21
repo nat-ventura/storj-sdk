@@ -1,0 +1,39 @@
+{
+  "storage": {
+    "mongoUrl": "mongodb://db:27017/storj-sandbox",
+    "mongoOpts": {}
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "timeout": 240000,
+    "ssl": {
+      "cert": null,
+      "key": null,
+      "ca": [],
+      "redirect": 8080
+    },
+    "public": {
+      "host": "0.0.0.0",
+      "port": 8080
+    }
+  },
+  "complex": {
+    "rpcUrl": "http://landlord:8081",
+    "rpcUser": "user",
+    "rpcPassword": "pass"
+  },
+  "logger": {
+    "level": 4
+  },
+  "mailer": {
+    "host": "smtp.domain",
+    "port": 465,
+    "secure": true,
+    "auth": {
+      "user": "user@domain",
+      "pass": "pass"
+    },
+    "from": "user@domain"
+  }
+}

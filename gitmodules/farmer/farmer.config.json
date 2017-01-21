@@ -1,0 +1,35 @@
+{
+  "keypath": "/root/.storjshare/id_ecdsa",
+  "address": "1EkMi5CFSkPY8jeAdfu3y1tUPCERQAf9xV",
+  "storage": {
+    "path": "/root/.storjshare",
+    "size": 2,
+    "unit": "GB"
+  },
+  "network": {
+    "address": "{{ IP_ADDRESS }}",
+    "port": 9000,
+    "opcodes": [
+      "0f01020202",
+      "0f02020202",
+      "0f03020202"
+    ],
+    "forward": false,
+    "tunnels": 0,
+    "tunnelport": 4001,
+    "gateways": {
+      "min": 0,
+      "max": 0
+    },
+    "seeds": [
+      "storj://renter:4000/337472da3068fa05d415262baf4df5bada8aefdc"
+    ],
+    "concurrency": 3
+  },
+  "telemetry": {
+    "service": "https://status.storj.io",
+    "enabled": false
+  },
+  "bridgeUri": "http://bridge:8080",
+  "loglevel": 4
+}
