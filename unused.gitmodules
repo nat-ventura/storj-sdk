@@ -3,10 +3,10 @@
 	url = git@github.com:storj/bridge
 [submodule "complex/complex"]
 	path = complex/complex
-	url = git@github.com:storj/complex
-[submodule "share/storjshare-cli"]
-	path = share/storjshare-cli
-	url = git@github.com:storj/storjshare-cli
+	url = git@github.com:retrohacker/complex
+[submodule "farmer/storjshare-cli"]
+	path = farmer/storjshare-cli
+	url = git@github.com:retrohacker/storjshare-cli
 [submodule "cli/core-cli"]
 	path = cli/core-cli
 	url = git@github.com:storj/core-cli

@@ -1,0 +1,54 @@
+{
+  "name": "storjshare-cli",
+  "version": "9.0.8",
+  "description": "command line program for farming on the storj network",
+  "preferGlobal": true,
+  "bin": {
+    "storjshare": "bin/storjshare.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storj/farmer-cli.git"
+  },
+  "keywords": [
+    "storj",
+    "farmer",
+    "cli",
+    "storjshare",
+    "share"
+  ],
+  "author": "Gordon Hall <gordon@storj.io>",
+  "contributors": [
+    {
+      "name": "Philip Hutchins",
+      "url": "https://phutchins.com"
+    },
+    {
+      "name": "Jeffrey van Binsbergen",
+      "url": "http://jeffreyvanbinsbergen.nl"
+    },
+    {
+      "name": "Alex Leitner",
+      "url": "https://github.com/aleitner"
+    },
+    {
+      "name": "littleskunk",
+      "url": "https://github.com/littleskunk"
+    }
+  ],
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/storj/storjshare-cli/issues"
+  },
+  "homepage": "https://github.com/storj/storjshare-cli#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "bs58": "^3.0.0",
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "kad-logger-json": "^0.1.2",
+    "prompt": "^1.0.0",
+    "storj-lib": "^6.0.11",
+    "storj-telemetry-reporter": "^4.0.0"
+  }
+}
