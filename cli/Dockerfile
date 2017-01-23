@@ -10,5 +10,6 @@ ADD core-cli/ ./
 
 WORKDIR /usr/src/data
 
-ENTRYPOINT ["dumb-init", "--", "/usr/src/app/bin/storj.js"]
-CMD ["--help"]
+CMD ["/bin/sleep", "6000"]
+#ENTRYPOINT ["dumb-init", "--", "/usr/src/app/bin/storj.js"]
+#CMD ["--help"]

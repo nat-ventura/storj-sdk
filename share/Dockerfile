@@ -10,6 +10,7 @@ WORKDIR /usr/src/app
 ADD storjshare-cli/package.json ./
 RUN npm install
 ADD storjshare-cli/ ./
+ADD TRUSTED_KEYS ./node_modules/storj-lib/
 
 ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh"]
 CMD ["./bin/storjshare.js"]
