@@ -2,6 +2,7 @@ version: "2"
 services:
   cli:
     build: ./cli
+    command: ["/bin/sleep", "infinity"]
     image: storj-cli
   db:
     image: mongo:3.4.0
@@ -47,3 +48,22 @@ services:
     command: ["./bin/storjshare.js", "start", "-p", "password"]
 #    ports:
 #      - 9000:9000
+  proxy:
+    build: ./vpn
+    ports:
+      - "127.0.0.1:13194:13194"
+    command: TCP-LISTEN:13194,fork TCP:172.17.0.1:1194
+  openvpn:
+    build: ./vpn/openvpn
+    command: ["/bin/sleep", "6000"]
+    volumes:
+      - ./vpn:/local
+      - ./vpn/config:/etc/openvpn
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    environment:
+      dest: docker-for-mac.ovpn
+      DEBUG: '1'
+    #command: ["ovpn_run"]
+

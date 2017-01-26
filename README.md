@@ -104,6 +104,11 @@ Service Containers
 #### Exposing Farmer to Host
 Need to expose farmers IP and port locally (and have it set correctly in its config) so that storj-cli can connect to it. Otherwise we have to run the CLI in a container so that it can reach the network that the farmers are on.
 
+##### VPN
+Can use a VPN to connect the two networks. This may require additional setup but could be scripted farily easily on osx in the background using openvpn.
+
+ - https://github.com/wojas/docker-mac-network
+
 ##### IP Aliasing
   You can accomplish this with IP aliasing on the host.
 

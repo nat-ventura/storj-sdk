@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Not sure if we will use this or not... simply an experiment
+
 # Fetch the IP Address of the container
 IP=$(ip addr show dev eth0 | grep 'inet ' | sed 's/\// /g' | awk '{ print $2 }')
 

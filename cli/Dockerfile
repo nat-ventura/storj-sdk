@@ -8,8 +8,10 @@ ADD core-cli/package.json .
 RUN npm install
 ADD core-cli/ ./
 
+ENV STORJ_BRIDGE http://bridge:8080
+
 WORKDIR /usr/src/data
 
-CMD ["/bin/sleep", "6000"]
+CMD ["/bin/sleep", "infinity"]
 #ENTRYPOINT ["dumb-init", "--", "/usr/src/app/bin/storj.js"]
 #CMD ["--help"]
