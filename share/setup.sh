@@ -26,3 +26,5 @@ trap "{ echo 'Cleaning up $FILE'; rm -rf $FILE; }" EXIT
 cat /root/.storjshare/config.template.json | sed "s/{{ IP_ADDRESS }}/$IP/g" | sed "s~{{ STORAGE_PATH }}~$DIR~g" > /root/config.json
 
 /bin/bash -c "$@"
+
+tail -f /root/share.log
