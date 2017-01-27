@@ -8,4 +8,10 @@ IP=$(ip addr show dev eth0 | grep 'inet ' | sed 's/\// /g' | awk '{ print $2 }')
 # Add it to config
 sed "s/{{ IP_ADDRESS }}/$IP/g" /root/.storjshare/config.template.json > /root/config.json
 
-exec $@
+echo "$@"
+
+$@
+
+echo "Running tail"
+
+tail -f /root/share.log
