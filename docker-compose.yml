@@ -45,7 +45,7 @@ services:
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
-    command: ["./bin/storjshare.js", "start", "-p", "password"]
+    command: ["./bin/storjshare-daemon.js", "--foreground", "start", "-c", "/root/config.json"]
 #    ports:
 #      - 9000:9000
   proxy:

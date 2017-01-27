@@ -1,35 +1,31 @@
 {
-  "keypath": "/root/.storjshare/id_ecdsa",
-  "address": "1EkMi5CFSkPY8jeAdfu3y1tUPCERQAf9xV",
-  "storage": {
-    "path": "/root/.storjshare",
-    "size": 2,
-    "unit": "GB"
-  },
-  "network": {
-    "address": "{{ IP_ADDRESS }}",
-    "port": 9000,
-    "opcodes": [
-      "0f01020202",
-      "0f02020202",
-      "0f03020202"
-    ],
-    "forward": false,
-    "tunnels": 0,
-    "tunnelport": 4001,
-    "gateways": {
-      "min": 0,
-      "max": 0
-    },
-    "seeds": [
-      "storj://renter:4000/337472da3068fa05d415262baf4df5bada8aefdc"
-    ],
-    "concurrency": 3
-  },
-  "telemetry": {
-    "service": "https://status.storj.io",
-    "enabled": false
-  },
+  "paymentAddress": "1EkMi5CFSkPY8jeAdfu3y1tUPCERQAf9xV",
+  "opcodeSubscriptions": [
+    "0f01020202",
+    "0f02020202",
+    "0f03020202"
+  ],
+  "maxOfferConcurrency": 3,
   "bridgeUri": "http://bridge:8080",
-  "loglevel": 4
+  "seedList": [],
+  "rpcAddress": "{{ IP_ADDRESS }}",
+  "rpcPort": 9000,
+  "doNotTraverseNat": true,
+  "maxTunnels": 0,
+  "maxConnections": 150,
+  "tunnelGatewayRange": {
+    "min": 9001,
+    "max": 9002
+  },
+  "joinRetry": {
+    "times": 3,
+    "interval": 5000
+  },
+  "offerBackoffLimit": 4,
+  "networkPrivateKey": "49bdba84e646a365bcc4cdab419fd2255f1e645484bee22aae4579af79ab0848",
+  "loggerVerbosity": 3,
+  "loggerOutputFile": "/home/node/.config/storjshare/logs/1d7311605844774b8564bcf170047e2ba704e544.log",
+  "storagePath": "/root/.storjshare",
+  "storageAllocation": "2GB",
+  "enableTelemetryReporting": true
 }
