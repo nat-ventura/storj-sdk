@@ -45,7 +45,7 @@ services:
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
-    command: ["./bin/storjshare.js", "start", "-p", "password"]
+    command: ["./bin/storjshare.js", "start"]
 #    ports:
 #      - 9000:9000
   proxy:
@@ -55,7 +55,7 @@ services:
     command: TCP-LISTEN:13194,fork TCP:172.17.0.1:1194
   openvpn:
     build: ./vpn/openvpn
-    command: ["/bin/sleep", "6000"]
+    #command: ["/bin/sleep", "6000"]
     volumes:
       - ./vpn:/local
       - ./vpn/config:/etc/openvpn
@@ -65,5 +65,5 @@ services:
     environment:
       dest: docker-for-mac.ovpn
       DEBUG: '1'
-    #command: ["ovpn_run"]
+    command: ["/local/helpers/run.sh"]
 
