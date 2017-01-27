@@ -8,7 +8,7 @@ ADD bridge/package.json .
 RUN npm install
 ADD bridge/ ./
 
-ADD https://raw.githubusercontent.com/retrohacker/docker-wait/master/wait.sh /bin/wait.sh
+ADD https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh /bin/wait.sh
 
 ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh"]
 CMD ["./bin/storj-bridge.js"]

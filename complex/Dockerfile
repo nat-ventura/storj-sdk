@@ -9,7 +9,7 @@ RUN npm install
 ADD complex/ ./
 ADD setup.sh /bin/setup.sh
 
-ADD https://raw.githubusercontent.com/retrohacker/docker-wait/master/wait.sh /bin/wait.sh
+ADD https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh /bin/wait.sh
 
 ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh"]
 CMD ["./bin/storj-complex.js"]

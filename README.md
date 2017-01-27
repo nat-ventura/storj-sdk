@@ -91,6 +91,14 @@ Service Containers
   + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
   + Rebuilding a particular container and restarting that service
   + Viewing logs for all or each service
+6) Tests
+  + Test user creation
+  + Test user activation
+  + Test file upload
+  + Test file download
+7) Cleanup / Reset
+  + Reset the state of the DB
+  + Reset the state of the Farmer
 
 
 ## Issues & Problems to Solve
