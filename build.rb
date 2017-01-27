@@ -181,7 +181,8 @@ if options[:run]
   puts "Run: #{options[:run]}"
   if options[:run] == 'local'
     puts "Running local"
-    run_command("docker run storjlabs/#{app_name}:latest")
+    #run_command("docker run storjlabs/#{app_name}:latest")
+    run_command("docker-compose up --build -d")
   end
 end
 

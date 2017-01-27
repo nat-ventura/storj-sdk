@@ -11,7 +11,6 @@ WORKDIR /usr/src/app
 ADD storjshare-daemon/package.json ./
 RUN npm install
 ADD storjshare-daemon/ ./
-ADD TRUSTED_KEYS ./node_modules/storj-lib/
+ADD TRUSTED_KEYS ./node_modules/storj-lib/lib/
 
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh"]
-CMD ["./bin/storjshare.js"]
+ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "bin/storjshare.js start -c /root/config.json"]
