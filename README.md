@@ -2,6 +2,10 @@
 The Storj Developer Kit
 
 ## Setup
+
+### Git Clone 
+`git clone https://github.com/Storj/storj-sdk.git --recursive`
+
 ### Initial Setup
 +
 + `docker-compose build`
