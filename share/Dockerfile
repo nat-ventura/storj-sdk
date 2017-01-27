@@ -10,6 +10,7 @@ ADD ./setup.sh /bin/setup.sh
 WORKDIR /usr/src/app
 ADD storjshare-daemon/package.json ./
 RUN npm install
+RUN mkdir /share
 ADD storjshare-daemon/ ./
 ADD TRUSTED_KEYS ./node_modules/storj-lib/lib/
 

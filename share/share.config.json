@@ -30,7 +30,7 @@
   "networkPrivateKey": "49bdba84e646a365bcc4cdab419fd2255f1e645484bee22aae4579af79ab0848",
   "loggerVerbosity": 4,
   "loggerOutputFile": "/root/share.log",
-  "storagePath": "/root/.storjshare",
-  "storageAllocation": "10000MB",
+  "storagePath": "/share/",
+  "storageAllocation": "1073741",
   "enableTelemetryReporting": true
 }
