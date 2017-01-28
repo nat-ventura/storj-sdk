@@ -28,9 +28,9 @@
   },
   "offerBackoffLimit": 4,
   "networkPrivateKey": "49bdba84e646a365bcc4cdab419fd2255f1e645484bee22aae4579af79ab0848",
-  "loggerVerbosity": 4,
+  "loggerVerbosity": 3,
+  "storagePath": "{{ STORAGE_PATH }}",
+  "storageAllocation": "2GB",
   "loggerOutputFile": "/root/share.log",
-  "storagePath": "/share/",
-  "storageAllocation": "1073741",
   "enableTelemetryReporting": true
 }

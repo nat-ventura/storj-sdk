@@ -10,3 +10,6 @@
 [submodule "cli"]
 	path = cli/core-cli
 	url = git@github.com:Storj/core-cli
+[submodule "bridge-gui"]
+	path = bridge-gui
+	url = git@github.com:Storj/bridge-gui.git
