@@ -3,8 +3,11 @@ The Storj Developer Kit
 
 ## Setup
 
-### Git Clone 
+### Git Clone
 `git clone https://github.com/Storj/storj-sdk.git --recursive`
+
+### Git First time setup
+`git submodule update --init --recursive`
 
 ### Initial Setup
 +

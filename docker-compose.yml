@@ -39,12 +39,14 @@ services:
     restart: always
   share:
     build: ./share
+    command: ["/bin/sleep", "60000"]
     volumes:
       - ./share/data:/root/.storjshare
       - ./share/share.config.json:/root/.storjshare/config.template.json
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
+      - STORAGE_PATH=/share/
     #ports:
     #  - 9000:9000
   proxy:
@@ -65,12 +67,12 @@ services:
       dest: docker-for-mac.ovpn
       DEBUG: '1'
     command: ["/local/helpers/run.sh"]
-  gui:
-    build: ./bridge-gui
-    ports:
-      - "127.0.0.1:8000:8000"
-    environment:
-      - APIHOST=localhost
-      - APIPORT=8080
-    volumes:
-      - ./gui/gui:/gui
+    #gui:
+    #build: ./bridge-gui
+    #ports:
+    #  - "127.0.0.1:8000:8000"
+    #environment:
+    #  - APIHOST=localhost
+    #  - APIPORT=8080
+    #volumes:
+    #  - ./gui/gui:/gui

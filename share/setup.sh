@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-DIRECTORY="/root/.storjshare"
+#DIRECTORY="/root/.storjshare"
+DIRECTORY="/share"
 
 # Fetch the IP Address of the container
 IP=$(ip addr show dev eth0 | grep 'inet ' | sed 's/\// /g' | awk '{ print $2 }')
