@@ -9,7 +9,7 @@ services:
     volumes:
       - ./mongodb/data:/data/db
     ports:
-      - 27017:27017
+      - "27017"
   mq:
     image: rabbitmq:3.6.6
   bridge:
@@ -20,7 +20,7 @@ services:
     environment:
       - DOCKER_SERVICES=db:27017
     ports:
-      - 8080:8080
+      - "8080:8080"
   landlord:
     build: ./complex
     volumes:
@@ -41,14 +41,17 @@ services:
     build: ./share
     command: ["/bin/sleep", "60000"]
     volumes:
-      - ./share/data:/root/.storjshare
+      - ./share/instances:/share/instances
+      - ./share/scripts:/share/scripts
+      - ./share/templates:/share/templates
+      - ./share/logs:/share/logs
       - ./share/share.config.json:/root/.storjshare/config.template.json
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
-      - STORAGE_PATH=/share/
-    #ports:
-    #  - 9000:9000
+      - BASE_PATH=/share
+    ports:
+      - "9000"
   proxy:
     build: ./vpn
     ports:
@@ -66,6 +69,7 @@ services:
     environment:
       dest: docker-for-mac.ovpn
       DEBUG: '1'
+      DOCKER_NETWORK: storjsdk_default
     command: ["/local/helpers/run.sh"]
     #gui:
     #build: ./bridge-gui

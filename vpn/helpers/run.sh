@@ -8,6 +8,7 @@ if [ ! -f "/local/$dest" ]; then
     #rm -rf /etc/openvpn/*
     ovpn_genconfig -u tcp://localhost
     sed -i 's|^push|#push|' /etc/openvpn/openvpn.conf
+    echo "reneg-sec 0" >> /etc/openvpn/openvpn.conf
     echo localhost | ovpn_initpki nopass
     easyrsa build-client-full host nopass
     ovpn_getclient host | sed '
@@ -15,5 +16,7 @@ if [ ! -f "/local/$dest" ]; then
 	s|redirect-gateway.*|route 172.16.0.0 255.240.0.0|;
     ' > "/local/$dest"
 fi
+
+# ../scripts/iptables_setup.sh
 
 exec ovpn_run

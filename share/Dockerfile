@@ -19,4 +19,5 @@ RUN mkdir /share
 ADD storjshare-daemon/ ./
 ADD TRUSTED_KEYS ./node_modules/storj-lib/lib/
 
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "bin/storjshare.js start -c /root/config.json"]
+ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "bin/storjshare.js start -c /etc/storj/share.json"]
+#ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "/bin/sleep 60000"]

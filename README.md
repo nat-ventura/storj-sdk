@@ -6,13 +6,40 @@ The Storj Developer Kit
 ### Git Clone
 `git clone https://github.com/Storj/storj-sdk.git --recursive`
 
-### Git First time setup
-`git submodule update --init --recursive`
 
 ### Initial Setup
-+
++ `git submodule update --init --recursive`
+
+### Bring up Cluster
 + `docker-compose build`
 + `docker-compose up`
+
+## Pull Latest from Submodules
+Pull from tip of remote
++ `git submodule update --recursive --remote`
+
+Pull from latest commit (not what submodules points to)
++ `git submodule update --recursive`
+or
++ `git pull --recurse-submodules`
+
+## Pull branch/tag for Submodule
+```
+cd submodule_directory
+git checkout v1.0
+cd ..
+git add submodule_directory
+git commit -m "moved submodule to v1.0"
+git push
+```
+
+... then another developer would ...
+
+```
+git pull
+git submodule update
+```
+
 
 ### Rebuilding Everything
 + `docker-compose down`
@@ -91,19 +118,24 @@ Service Containers
 4) Work on docker-compose scale for farmers
   + Will need to dynamically and uniquely update the index for each new share instance
   + Will also need to expose itself on a unique port (can docker compose do math with ports?)
-5) Rename and update entry script to assist in the following
+5) Cleanup
+  + Move ansilary services to a single folder in root
+6) Rename and update entry script to assist in the following
   + Bringing the cluster up and down
   + Rebuilding the entire cluster and restarting
   + Run the preconfigured cli from within a docker container (link binary from host? Or launch a container?
   + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
   + Rebuilding a particular container and restarting that service
   + Viewing logs for all or each service
-6) Tests
+  + List addresses and ports of all services along with service type
+7) Convert mongodb container to sharded replicaset with authentication enabled
+  + This makes testing more like production
+8) Tests
   + Test user creation
   + Test user activation
   + Test file upload
   + Test file download
-7) Cleanup / Reset
+9) Cleanup / Reset
   + Reset the state of the DB
   + Reset the state of the Farmer
 
@@ -143,6 +175,12 @@ Can use a VPN to connect the two networks. This may require additional setup but
   + Linux Bridge Devices
   + Open vSwitch Bridge devices
   + macvlan devices
+
+#### Container host DNS resolution
+  + Something like this? https://github.com/bnfinet/docker-dns
+
+#### Container ENV Setup/Config/Customization
+  + http://cavaliercoder.com/blog/update-etc-hosts-for-docker-machine.html
 
 #### Running the CLI in a Container
 This works but the user experience is not great.
