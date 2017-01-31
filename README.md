@@ -38,10 +38,16 @@ $ ./scripts/interactive_add_user.sh
 ```
 
 + To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. To find this address, use the following command:
+`./sdk -i`
+
+or call the script directly
+
 `./scripts/get_local_bridge.sh`
 
 You can go ahead and export the bridge variable in one go like so...
 `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`
+
+or execute the command that the script tells you to
 
 Test your conneciton to the bridge and its supporting services
 
