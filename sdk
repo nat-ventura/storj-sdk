@@ -29,7 +29,8 @@ OptionParser.new do |opts|
   opts.separator ''
   opts.separator 'Setup'
 
-  opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { |v| options[:setup] = true }
+  opts.on('-d', '--deps', 'Set up local environment for building and working with docker images') { |v| options[:setup] = true }
+  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { |v| options[:init] = true }
 
   # Building
   opts.separator ''
@@ -154,6 +155,11 @@ if options[:setup]
 
   # Clean up after ourselves
   rm docker_dmg_file
+end
+
+if options[:init]
+  output = `./scripts/auto_add_user.sh`
+  puts output
 end
 
 if options[:build]
