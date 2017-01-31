@@ -16,7 +16,7 @@ export STORJ_BRIDGE_USERNAME=$STORJ_BRIDGE_USERNAME
 export STORJ_BRIDGE_PASSWORD=$STORJ_BRIDGE_PASSWORD
 
 # Get the local bridge URL
-STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)
+export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)
 
 # Check to see if the user is already logged in, if so, log them out
 #spawn storj register
