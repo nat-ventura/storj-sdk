@@ -1,18 +1,54 @@
 # storj-sdk
 The Storj Developer Kit
 
+## SDK Script
+The sdk script in the root directory of this project is a work in progress and is not ready for use.
+
 ## Setup
 
 ### Git Clone
-`git clone https://github.com/Storj/storj-sdk.git --recursive`
++ `git clone https://github.com/Storj/storj-sdk.git --recursive`
 
+ or if you've already checked out the repo without --recursive, try...
 
-### Initial Setup
 + `git submodule update --init --recursive`
 
 ### Bring up Cluster
-+ `docker-compose build`
 + `docker-compose up`
+
+To bring up the cluster in the background
++ `docker-compose up -d`
+
+To watch the logs for all services
++ `docker-compose logs -f`
+optionally you can add a service
++ `docker-compose logs -f bridge`
+
+If you only want to build and not bring up the cluster...
++ `docker-compose build`
+
+## Access Cluster
++ To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client such as Tunnelblick
++ After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
+
++ Next you'll need to create a user for yourself
+You can do this with the script provided
+```
+$ ./scripts/interactive_add_user.sh
+```
+
++ To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. To find this address, use the following command:
+`./scripts/get_local_bridge.sh`
+
+You can go ahead and export the bridge variable in one go like so...
+`eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`
+
+Test your conneciton to the bridge and its supporting services
+
+```
+storj add-bucket superawesomebucket
+storj list-buckets
+```
 
 ## Pull Latest from Submodules
 Pull from tip of remote

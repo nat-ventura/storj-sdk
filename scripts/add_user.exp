@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+
+spawn -noecho storj register
+
+expect "email"
+send "$env(STORJ_BRIDGE_USERNAME)\n"
+
+expect "password"
+send "$env(STORJ_BRIDGE_PASSWORD)\n"

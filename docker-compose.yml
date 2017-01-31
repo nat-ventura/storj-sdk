@@ -20,7 +20,7 @@ services:
     environment:
       - DOCKER_SERVICES=db:27017
     ports:
-      - "8080:8080"
+      - "8080"
   landlord:
     build: ./complex
     volumes:
