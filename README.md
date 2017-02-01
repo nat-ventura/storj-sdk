@@ -34,11 +34,10 @@ If you only want to build and not bring up the cluster...
 + Next you'll need to create a user for yourself
 You can do this with the script provided
 ```
-$ ./scripts/interactive_add_user.sh
+./sdk -i
 ```
 
 + To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. To find this address, use the following command:
-`./sdk -i`
 
 or call the script directly
 

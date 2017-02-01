@@ -94,7 +94,7 @@ while [ ! -f $SHARE_LOGS_DIR/share.log ]; do
   sleep 1;
   (($COUNTER+=1))
 
-  if counter = 10; then
+  if [[ $COUNTER -eq 10 ]]; then
     echo "Unable to tail log file"
     exit 1;
   fi
