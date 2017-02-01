@@ -4,9 +4,11 @@ The Storj Developer Kit
 ## SDK Script
 The sdk script in the root directory of this project is a work in progress and is not ready for use.
 
-## Setup
+## Setup / Quick Start
 
-### Git Clone
+### Check out the Repo
+To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
+
 + `git clone https://github.com/Storj/storj-sdk.git --recursive`
 
  or if you've already checked out the repo without --recursive, try...
@@ -14,40 +16,34 @@ The sdk script in the root directory of this project is a work in progress and i
 + `git submodule update --init --recursive`
 
 ### Bring up Cluster
+To bring up the cluster locally, we use docker-compose.
+
 + `docker-compose up`
 
 To bring up the cluster in the background
 + `docker-compose up -d`
 
-To watch the logs for all services
-+ `docker-compose logs -f`
-optionally you can add a service
-+ `docker-compose logs -f bridge`
+### Access Cluster
+To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client such as Tunnelblick.
 
-If you only want to build and not bring up the cluster...
-+ `docker-compose build`
+After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
-## Access Cluster
-+ To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client such as Tunnelblick
-+ After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
+To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. A script is provided to programatically determine the URL of your local bridge and can be found here: `./scripts/get_local_bridge.sh`. You can go ahead and export the bridge variable in one go like so: `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
 
-+ Next you'll need to create a user for yourself
-You can do this with the script provided
-```
-./sdk -i
-```
+#### Steps
 
-+ To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. To find this address, use the following command:
++ Install an OpenVPN compatible VPN client
 
-or call the script directly
++ Run or Import the OpenVPN config from `[root_of_sdk]/vpn/storj-local.ovpn`
 
-`./scripts/get_local_bridge.sh`
++ Init your cluster which adds a user, activates it and signs you in by typing `./sdk -i` from the root of the SDK
 
-You can go ahead and export the bridge variable in one go like so...
-`eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`
++ Export the STORJ_BRIDGE environment variable as instructed after running the init
 
-or execute the command that the script tells you to
++ Access the bridge as you would normally using your local Storj CLI (core-cli) keeping in mind that you will need to export the STORJ_BRIDGE environment variable in any terminal that you wish to use the local bridge from
 
+
+## Try it Out
 Test your conneciton to the bridge and its supporting services
 
 ```
@@ -55,7 +51,19 @@ storj add-bucket superawesomebucket
 storj list-buckets
 ```
 
-## Pull Latest from Submodules
+### Viewing Logs
+To watch the logs for all services
+
++ `docker-compose logs -f`
+
+optionally you can add a service
+
++ `docker-compose logs -f bridge`
+
+## Developing & Contributing
+If you would like to help make Storj better or would like to develop your application on top of the Storj platform, the Storj SDK aims to make this easy by tightening the feedback loop, removing as many requirements for getting started as possible, and allowing users to develop and test without accruing a balance while storing your test files.
+
+### Pull Latest from Submodules
 Pull from tip of remote
 + `git submodule update --recursive --remote`
 
@@ -64,7 +72,7 @@ Pull from latest commit (not what submodules points to)
 or
 + `git pull --recurse-submodules`
 
-## Pull branch/tag for Submodule
+### Pull branch/tag for Submodule
 ```
 cd submodule_directory
 git checkout v1.0
@@ -81,6 +89,9 @@ git pull
 git submodule update
 ```
 
+If you only want to build and not bring up the cluster...
++ `docker-compose build`
+
 
 ### Rebuilding Everything
 + `docker-compose down`
@@ -94,6 +105,10 @@ git submodule update
 + `docker-compose up --build [project]` or
   `docker-compose up -d --no-deps [project]`
 
+
+
+## SDK Under Heavy Development
+Please excuse our mess while we gather our thoughts. This SDK is under active development and may be a bit messy for a moment. At Storj, we love open source and transparency so we keep our thoughts out in the open. Below is a mess of ideas, problems, plans and solutions that we're sorting out and organizing as we go. We love feedback so please feel free to join the #SDK room on our community chat (https://community.storj.io) via the web or RocketChat.
 
 ## Usage
 + Setting upstream (which code repo to use)
@@ -176,9 +191,17 @@ Service Containers
   + Test user activation
   + Test file upload
   + Test file download
+9) Take Snapshots of Cluster State
+  + Get the state of the cluster the way that you want it
+  + Copy the mongodb data somewhere
+  + Copy the farmer keys and data somewhere, etc...
 9) Cleanup / Reset
   + Reset the state of the DB
   + Reset the state of the Farmer
+
+## Tech Debt / Cleanup
+  + It might be better to have the auto user creation and activation be done via JS and use the cli accounts.js actions (register, login, etc...)
+
 
 
 ## Issues & Problems to Solve
