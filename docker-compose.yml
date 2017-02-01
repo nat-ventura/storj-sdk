@@ -67,7 +67,7 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      dest: docker-for-mac.ovpn
+      dest: storj-local.ovpn
       DEBUG: '1'
       DOCKER_NETWORK: storjsdk_default
     command: ["/local/helpers/run.sh"]
