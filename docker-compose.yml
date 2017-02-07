@@ -15,6 +15,7 @@ services:
   bridge:
     build: ./bridge
     volumes:
+      - ./bridge/bridge:/usr/src/app
       - ./bridge/bridge.config.json:/root/config.json
     command: ["./bin/storj-bridge.js", "-c", "/root/config.json"]
     environment:
@@ -39,7 +40,6 @@ services:
     restart: always
   share:
     build: ./share
-    command: ["/bin/sleep", "60000"]
     volumes:
       - ./share/instances:/share/instances
       - ./share/scripts:/share/scripts
@@ -59,7 +59,6 @@ services:
     command: TCP-LISTEN:13194,fork TCP:172.17.0.1:1194
   openvpn:
     build: ./vpn/openvpn
-    #command: ["/bin/sleep", "6000"]
     volumes:
       - ./vpn:/local
       - ./vpn/config:/etc/openvpn

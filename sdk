@@ -36,6 +36,7 @@ OptionParser.new do |opts|
   opts.separator ''
   opts.separator "Actions"
 
+  opts.on('-u [module]', '--update', 'Update local module from remote') { |v| options[:update] = v || 'all' }
   opts.on('-b', '--build', 'Build a docker image') { |v| options[:build] = true }
   opts.on('-r [MODE]', '--run', 'Run a development instance',
           '   Run modes: (* = default)',
@@ -62,6 +63,7 @@ OptionParser.new do |opts|
 
   opts.on('-t', '--test', 'Run tests in the app docker container') { |v| options[:test] = true }
 
+  opts.separator ''
   opts.separator 'Global Options'
   opts.on('-y', '--yes', 'Do not prompt to confirm any actions') { |v| options[:yes] = true }
 
@@ -160,6 +162,12 @@ end
 if options[:init]
   output = `./scripts/auto_add_user.sh`
   puts output
+end
+
+if options[:update]
+  # Should add the ability to do sdk -u bridge@v4.0.0 or somehow define local module
+  # Currently default is all
+  run_command('git submodule update --recursive')
 end
 
 if options[:build]
