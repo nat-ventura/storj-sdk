@@ -72,7 +72,7 @@ else
   echo $KEY > $KEY_FILE_PATH
 fi
 
-mkdir /etc/storj
+mkdir -p /etc/storj
 
 if [ ! -f $SHARE_CONFIG_DIR/share.json ]; then
   ln -s $SHARE_CONFIG_DIR/share.json /etc/storj/share.json
