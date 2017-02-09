@@ -10,6 +10,7 @@ fi
 SCRIPTS_DIR="$BASE_PATH/scripts"
 TEMPLATES_DIR="$BASE_PATH/templates"
 LOGS_DIR="$BASE_PATH/logs"
+SHARE_LINK_PATH="/etc/storj/share.json"
 
 # Starting at 0, look for farmer directories until we find one
 #   that is unlocked or run out then create a new one
@@ -74,10 +75,6 @@ fi
 
 mkdir -p /etc/storj
 
-if [ ! -f $SHARE_CONFIG_DIR/share.json ]; then
-  ln -s $SHARE_CONFIG_DIR/share.json /etc/storj/share.json
-fi
-
 echo "Share config dir: $SHARE_CONFIG_DIR"
 echo "Share logs dir: $SHARE_LOGS_DIR"
 echo "Share data dir: $SHARE_DATA_DIR"
@@ -87,12 +84,18 @@ echo "Share key: $KEY"
 # Check if we have a config file and update
 cat $TEMPLATES_DIR/config.template.json | sed "s/{{ IP_ADDRESS }}/$IP/g" | sed "s~{{ STORAGE_PATH }}~$SHARE_DATA_DIR~g" | sed "s~{{ PRIVATE_KEY }}~$KEY~g" | sed "s~{{ LOG_FILE_PATH }}~$SHARE_LOGS_DIR/share.log~g" > $SHARE_CONFIG_DIR/share.json
 
+echo "Checking to see if link to config file exists at $SHARE_LINK_PATH"
+if [ ! -f $SHARE_LINK_PATH ]; then
+  echo "Config file link does not exist. Creating."
+  ln -s $SHARE_CONFIG_DIR/share.json $SHARE_LINK_PATH
+fi
+
 /bin/bash -c "$@"
 
 COUNTER=0
 while [ ! -f $SHARE_LOGS_DIR/share.log ]; do
   sleep 1;
-  (($COUNTER+=1))
+  ((COUNTER+=1))
 
   if [[ $COUNTER -eq 10 ]]; then
     echo "Unable to tail log file"

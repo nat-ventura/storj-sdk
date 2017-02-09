@@ -47,6 +47,7 @@ OptionParser.new do |opts|
             options[:run] = mode || 'local'
           end
   opts.on('-p', '--push', 'Push a docker image for an application to the docker hub') { |v| options[:push] = true }
+  opts.on('-c', '--clean', 'Clean local state') { |v| options[:clean] = v || 'all' }
 
   opts.separator ''
   opts.separator "To build, run, or push  you must choose either an environment to build the application for"
@@ -162,6 +163,25 @@ end
 if options[:init]
   output = `./scripts/auto_add_user.sh`
   puts output
+end
+
+if options[:clean]
+  if options[:clean] == 'all'
+    clean_share
+    clean_mongo
+  end
+end
+
+def clean_docker
+  run_command('clean docker', 'docker-compose down --rmi all')
+end
+
+def clean_share
+  run_command('clean share', 'git clean -fdx share/instances/')
+end
+
+def clean_mongo
+  run_command('clean mongo', 'git clean -fdx mongodb/data/')
 end
 
 if options[:update]
