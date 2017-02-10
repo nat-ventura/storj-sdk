@@ -15,7 +15,6 @@ services:
   bridge:
     build: ./bridge
     volumes:
-      - ./bridge/bridge:/usr/src/app
       - ./bridge/bridge.config.json:/root/config.json
     command: ["./bin/storj-bridge.js", "-c", "/root/config.json"]
     environment:
