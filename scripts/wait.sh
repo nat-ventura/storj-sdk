@@ -13,8 +13,10 @@ if [ -n "$DOCKER_SERVICES" ]; then
     echo "Resolved $HOST to $IP!"
     echo "Waiting for $PORT on $IP"
     until exec 6<>"/dev/tcp/$IP/$PORT"; do
+      6<&-
       sleep 1
     done
+    6<&-
     echo "$IP:$PORT is up!"
   done
 fi
