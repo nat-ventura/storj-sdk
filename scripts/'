@@ -1,8 +1,0 @@
-#!/bin/bash
-# Find the local bridge
-
-BRIDGE_CONTAINER_ID=$(docker ps | grep bridge | cut -d " " -f1)
-NET_NAME=$(. get_net_name.sh)
-echo "Net name: $NET_NAME"
-BRIDGE_IP=$(docker inspect $BRIDGE_CONTAINER_ID | jq ".[0].NetworkSettings.Networks.$NET_NAME.IPAddress")
-echo "Bridge IP: $BRIDGE_IP"

@@ -40,17 +40,11 @@ services:
   share:
     build: ./share
     volumes:
-      - ./share/instances:/share/instances
-      - ./share/scripts:/share/scripts
-      - ./share/templates:/share/templates
-      - ./share/logs:/share/logs
-      - ./share/share.config.json:/root/.storjshare/config.template.json
+      - ./share/config.json:/root/.config/storjshare/config.template.json
+      - ./share/data:/root/.config/storjshare/data
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
-      - BASE_PATH=/share
-    ports:
-      - "9000"
   proxy:
     build: ./vpn
     ports:
@@ -69,12 +63,12 @@ services:
       DEBUG: '1'
       DOCKER_NETWORK: storjsdk_default
     command: ["/local/helpers/run.sh"]
-    #gui:
-    #build: ./bridge-gui
-    #ports:
-    #  - "127.0.0.1:8000:8000"
-    #environment:
-    #  - APIHOST=localhost
-    #  - APIPORT=8080
-    #volumes:
-    #  - ./gui/gui:/gui
+# gui:
+# build: ./bridge-gui
+# ports:
+#   - "127.0.0.1:8000:8000"
+# environment:
+#   - APIHOST=localhost
+#   - APIPORT=8080
+# volumes:
+#   - ./gui/gui:/gui
