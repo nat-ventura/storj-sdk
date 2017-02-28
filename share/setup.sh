@@ -1,106 +1,102 @@
 #!/usr/bin/env bash
 
-# $BASE_PATH - Base BASE_PATH for farmer configs and data
+# BASE_PATH is where we will store all config files dynamically generated at
+# runtime
+BASE_PATH="/root/.config/storjshare"
+mkdir -p "${BASE_PATH}"
 
-if [ ! -d "$BASE_PATH" ]; then
-  echo "Creating data dir: $BASE_PATH"
-  mkdir -p "$BASE_PATH"
-fi
-
-SCRIPTS_DIR="$BASE_PATH/scripts"
-TEMPLATES_DIR="$BASE_PATH/templates"
-LOGS_DIR="$BASE_PATH/logs"
-SHARE_LINK_PATH="/etc/storj/share.json"
-
-# Starting at 0, look for farmer directories until we find one
-#   that is unlocked or run out then create a new one
+# Farmers claim data directories in the order they startup, allowing farmers to
+# persist data to disk _and_ scale at the same time. The logic here is that
+# the farmer attempts to create a lockfile to claim a directory, if there aren't
+# any available directories it attempts to create a new one and claim it
 for i in {1..10000}; do
-  INSTANCE="farmer_$i"
-  CURRENT_DIR="$BASE_PATH/instances/$INSTANCE"
+  INSTANCE="farmer_${i}"
+  CURRENT_DIR="${BASE_PATH}/data/${INSTANCE}"
 
-  # If we're looking for a BASE_PATH that doesnt exist, create it and init its config
-  if [ ! -d "$CURRENT_DIR" ]; then
+  # If we are trying to claim a directory that doesnt exist, create it
+  if [ ! -d "${CURRENT_DIR}" ]; then
     echo "Creating ${CURRENT_DIR}..."
-    mkdir -p "$CURRENT_DIR"
+    mkdir -p "${CURRENT_DIR}"
   fi
 
-  CLAIM_FILE="$CURRENT_DIR/.claim"
+  CLAIM_FILE="${CURRENT_DIR}/.claim"
 
-  echo "Checking if $CURRENT_DIR is claimed..."
-
-  if lockfile -r 0 "$CURRENT_DIR/.claim"; then
+  echo "Checking if ${CURRENT_DIR} is claimed..."
+  if lockfile -r 0 "${CLAIM_FILE}"; then
     echo "Claimed $DIR!"
-
-    SHARE_CONFIG_DIR="$CURRENT_DIR/config"
-    SHARE_DATA_DIR="$CURRENT_DIR/data"
-    SHARE_LOGS_DIR="$CURRENT_DIR/logs"
-
-    if [ ! -d "$SHARE_CONFIG_DIR" ]; then
-      echo "Creating ${SHARE_CONFIG_DIR}..."
-      mkdir -p "$SHARE_CONFIG_DIR"
-    fi
-
-    if [ ! -d "$SHARE_DATA_DIR" ]; then
-      echo "Creating ${SHARE_DATA_DIR}..."
-      mkdir -p "$SHARE_DATA_DIR"
-    fi
-
-    if [ ! -d "$SHARE_LOGS_DIR" ]; then
-      echo "Creating ${SHARE_LOGS_DIR}..."
-      mkdir -p "$SHARE_LOGS_DIR"
-    fi
-
     break
   fi
-  echo "$CURRENT_DIR claimed, trying next..."
+
+  echo "${CURRENT_DIR} claimed, trying next..."
 done
 
-trap "{ echo 'Cleaning up $CLAIM_FILE'; rm -rf $CLAIM_FILE; }" EXIT
+# Make sure that we don't abandon a .claimfile when shutting down preventing a
+# future farmer from claiming the data
+trap "{ echo 'Cleaning up ${CLAIM_FILE}'; rm -rf ${CLAIM_FILE}; }" EXIT
 
-# Every time we start a farmer, we should check to see if we already have a config for that farmer.
-# We should then in place update the IP address with an updated IP
+# Store all of the farmer's shards and the farmer's keyfile in the storage path
+STORAGE_PATH="${CURRENT_DIR}/shards"
+KEY_PATH="${CURRENT_DIR}/KEY_FILE"
 
-# Fetch the IP Address of the container
+# Make sure STORAGE_PATH exists, otherwise write a helpful message to the log
+# and create it
+if [ ! -d "${STORAGE_PATH}" ]; then
+  echo "Creating ${STORAGE_PATH}..."
+  mkdir -p "${STORAGE_PATH}"
+fi
+
+# Fetch the IP Address of the container that was assigned when it started up
 IP=$(ip addr show dev eth0 | grep 'inet ' | sed 's/\// /g' | awk '{ print $2 }')
 
 # Try to load KEY from file for this farmer
-KEY_FILE="KEY_FILE"
-KEY_FILE_PATH="$SHARE_CONFIG_DIR/$KEY_FILE"
-if [ -f $KEY_FILE_PATH ]; then
-  KEY=$(cat $KEY_FILE_PATH);
+if [ -f "${KEY_PATH}" ]; then
+  PRIVATE_KEY="$(cat "${KEY_PATH}");"
 else
-  KEY=$(node $SCRIPTS_DIR/gen_key.js)
-  echo $KEY > $KEY_FILE_PATH
+  # Generate a key using storj-lib
+  PRIVATE_KEY=$(node -e "
+    var storj = require('storj-lib');
+    console.log('%s', storj.KeyPair().getPrivateKey());
+  ")
+  echo "${PRIVATE_KEY}" > "${KEY_PATH}"
 fi
 
-mkdir -p /etc/storj
-
-echo "Share config dir: $SHARE_CONFIG_DIR"
-echo "Share logs dir: $SHARE_LOGS_DIR"
-echo "Share data dir: $SHARE_DATA_DIR"
-echo "Key file path: $KEY_FILE_PATH"
-echo "Share key: $KEY"
+echo "IP: ${IP}"
+echo "Key file path: ${KEY_PATH}"
+echo "Key: ${PRIVATE_KEY}"
+echo "Storage: ${STORAGE_PATH}"
 
 # Check if we have a config file and update
-cat $TEMPLATES_DIR/config.template.json | sed "s/{{ IP_ADDRESS }}/$IP/g" | sed "s~{{ STORAGE_PATH }}~$SHARE_DATA_DIR~g" | sed "s~{{ PRIVATE_KEY }}~$KEY~g" | sed "s~{{ LOG_FILE_PATH }}~$SHARE_LOGS_DIR/share.log~g" > $SHARE_CONFIG_DIR/share.json
+cat "${BASE_PATH}/config.template.json" | \
+  sed "s/{{ IP }}/${IP}/g" | \
+  sed "s~{{ STORAGE_PATH }}~${STORAGE_PATH}~g" | \
+  sed "s~{{ PRIVATE_KEY }}~${KEY}~g" \
+  > "${BASE_PATH}/config"
 
-echo "Checking to see if link to config file exists at $SHARE_LINK_PATH"
-if [ ! -f $SHARE_LINK_PATH ]; then
-  echo "Config file link does not exist. Creating."
-  ln -s $SHARE_CONFIG_DIR/share.json $SHARE_LINK_PATH
-fi
+/bin/bash -c -- "$@"
 
-/bin/bash -c "$@"
+DAEMON_LOGS="/var/log/storj.daemon.log"
+FARMER_LOGS="/var/log/storj.farmer.log"
 
 COUNTER=0
-while [ ! -f $SHARE_LOGS_DIR/share.log ]; do
+while [ ! -f "${DAEMON_LOGS}" ]; do
   sleep 1;
   ((COUNTER+=1))
 
-  if [[ $COUNTER -eq 10 ]]; then
-    echo "Unable to tail log file"
+  if [[ "${COUNTER}" -eq 10 ]]; then
+    echo "Didn't find log file: ${DAEMON_LOGS}"
     exit 1;
   fi
 done
 
-tail -f $SHARE_LOGS_DIR/share.log
+COUNTER=0
+while [ ! -f "${FARMER_LOGS}" ]; do
+  sleep 1;
+  ((COUNTER+=1))
+
+  if [[ "${COUNTER}" -eq 10 ]]; then
+    echo "Didn't find log file: ${FARMER_LOGS}"
+    exit 1;
+  fi
+done
+
+tail -f "${DAEMON_LOGS}" "${FARMER_LOGS}"
