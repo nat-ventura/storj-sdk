@@ -15,8 +15,8 @@ services:
   bridge:
     build: ./bridge
     volumes:
-      - ./bridge/bridge.config.json:/root/config.json
-    command: ["./bin/storj-bridge.js", "-c", "/root/config.json"]
+      - ./bridge/config.json:/bridge/config.json
+    command: ["./bin/storj-bridge.js", "-c", "/bridge/config.json"]
     environment:
       - DOCKER_SERVICES=db:27017
     ports:
@@ -40,8 +40,8 @@ services:
   share:
     build: ./share
     volumes:
-      - ./share/config.json:/root/.config/storjshare/config.template.json
-      - ./share/data:/root/.config/storjshare/data
+      - ./share/instances:/share/instances
+      - ./share/templates:/share/templates
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
@@ -63,12 +63,28 @@ services:
       DEBUG: '1'
       DOCKER_NETWORK: storjsdk_default
     command: ["/local/helpers/run.sh"]
-# gui:
-# build: ./bridge-gui
-# ports:
-#   - "127.0.0.1:8000:8000"
-# environment:
-#   - APIHOST=localhost
-#   - APIPORT=8080
-# volumes:
-#   - ./gui/gui:/gui
+  bridge-gui:
+    build: ./bridge-gui
+    ports:
+      - "8080"
+    environment:
+      - APIHOST_VAL=bridge
+      - APIPORT_VAL=80
+      - APIPROTOCOL_VAL=http
+      - NODE_ENV_VAL=production
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_9jNycwEK9kRyCEbKpbMJI1rO
+      - APOLLO_CLIENT_URL_VAL=https://bridge-gui:3000/graphql
+      - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
+      - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui
+    command: ["./dockerfiles/scripts/start-bridge-gui"]
+  bridge-gui-ssl-proxy:
+    image: storjlabs/nginx-ssl-proxy:latest
+    environment:
+      - ENABLE_SSL=true
+      - TARGET_SERVICE=bridge-gui:8080
+    ports:
+      - "443"
+    volumes:
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam

@@ -33,7 +33,6 @@ ADD ./setup.sh /bin/setup.sh
 ADD TRUSTED_KEYS ./node_modules/storj-lib/lib/
 
 # Pass everything through dumb-init and wait.sh first, making sure our process handles the responsibilities of PID 1 and waits for services it depends on to start before coming up.
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh", "/bin/setup.sh"]
-
+ENTRYPOINT ["dumb-init", "--"]
 # By default we will start the storj-share daemon using a configuration file from /etc/storj/share.json, note that this starts a daemon process so the container will immediately exit, you need to run something like 'tail' similar to what /bin/setup.sh does if you decide to use another entrypoint
-CMD ["./bin/storjshare.js daemon && ./bin/storjshare.js start -c /root/.config/storjshare/config"]
+CMD ["/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "./bin/storjshare.js daemon && ./bin/storjshare.js start -c /etc/storj/share.json"]

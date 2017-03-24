@@ -28,7 +28,15 @@ To access your cluster (from OSX) you'll need to install an OpenVPN compatible V
 
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
+#### Bridge
 To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. A script is provided to programatically determine the URL of your local bridge and can be found here: `./scripts/get_local_bridge.sh`. You can go ahead and export the bridge variable in one go like so: `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
+
+#### Bridge GUI
+Currently to access the bridge gui, you will need to determine the IP address of the bridge-gui-ssl-proxy and add it as a host entry in your /etc/hosts file. We are working on a way to automate this in the future.
+
+The process has been scripted which can be run from the root of the storj-sdk as follows:
+
+`./scripts/set_bridge_gui_hosts_entry.sh`
 
 #### Steps
 
