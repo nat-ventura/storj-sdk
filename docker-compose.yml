@@ -45,6 +45,8 @@ services:
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
+    ports:
+      - "9000"
   proxy:
     build: ./vpn
     ports:
