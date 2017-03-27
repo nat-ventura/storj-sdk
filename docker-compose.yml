@@ -77,7 +77,7 @@ services:
       - APIPORT_VAL=8080
       - APIPROTOCOL_VAL=http
       - NODE_ENV_VAL=production
-      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_9jNycwEK9kRyCEbKpbMJI1rO
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
       - APOLLO_CLIENT_URL_VAL=https://bridge-gui:3000/graphql
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
       - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui
