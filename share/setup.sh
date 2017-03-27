@@ -123,19 +123,7 @@ fi
 
 /bin/bash -c -- "$@"
 
-DAEMON_LOGS="/var/log/storj.daemon.log"
 FARMER_LOGS="/var/log/storj.farmer.log"
-
-#COUNTER=0
-#while [ ! -f "${DAEMON_LOGS}" ]; do
-#  sleep 1;
-#  ((COUNTER+=1))
-#
-#  if [[ "${COUNTER}" -eq 10 ]]; then
-#    echo "Didn't find log file: ${DAEMON_LOGS}"
-#    exit 1;
-#  fi
-#done
 
 COUNTER=0
 while [ ! -f "${FARMER_LOGS}" ]; do
@@ -148,6 +136,4 @@ while [ ! -f "${FARMER_LOGS}" ]; do
   fi
 done
 
-tail -f "${DAEMON_LOGS}" "${FARMER_LOGS}"
-#tail -f "${FARMER_LOGS}"
-#tail -f "${DAEMON_LOGS}"
+tail -f "${FARMER_LOGS}"
