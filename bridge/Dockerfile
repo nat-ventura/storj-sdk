@@ -6,9 +6,12 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
  && chmod +x /usr/local/bin/dumb-init
 
 # wait.sh forces our app to wait for other containers to come up before starting
+# Should pull this into the repo to cache it or use the included wait scritp that comes with newer docker
+# We shouldn't have to do this at all however. Our services should wait for other services until they are alive.
 RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
 
 # We will run our application from /usr/src/app to be a good linux citizen
+# Possibly should use /opt/storj or /storj/bridge
 WORKDIR /usr/src/app
 
 # Cache node_modules

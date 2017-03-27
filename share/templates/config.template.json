@@ -2,7 +2,7 @@
   "daemonRpcPort": 45015,
   "daemonRpcAddress": "0.0.0.0",
   "daemonLogFilePath": "/var/log/storj.daemon.log",
-  "daemonLogVerbosity": 3,
+  "daemonLogVerbosity": 4,
   "paymentAddress": "1EkMi5CFSkPY8jeAdfu3y1tUPCERQAf9xV",
   "opcodeSubscriptions": [
     "0f01020202",
@@ -27,14 +27,14 @@
     "max": 9002
   },
   "joinRetry": {
-    "times": 3,
+    "times": 300,
     "interval": 5000
   },
   "offerBackoffLimit": 9007199254740991,
   "networkPrivateKey": "{{ PRIVATE_KEY }}",
-  "loggerVerbosity": 3,
+  "loggerVerbosity": 4,
   "loggerOutputFile": "/var/log/storj.farmer.log",
   "storagePath": "{{ STORAGE_PATH }}",
-  "storageAllocation": "100GB",
+  "storageAllocation": "2GB",
   "enableTelemetryReporting": false
 }
