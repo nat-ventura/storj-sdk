@@ -214,6 +214,22 @@ Service Containers
 
 ## Issues & Problems to Solve
 
+### Developing Against Local Node Module Dependencies
+  We could create a git submodule for each dependency at the top level, this would have to be where we execute the Dockerfile or docker-compose file from as docker cant copy from outside the cwd.
+
+  + We can set the npm prefix `npm config set prefix "/Users/me/github/storj-sdk/vendor/node_modules"` then use npm link which will link the module there.
+  + We can then hard link the module and use it in docker
+  + We will have to configure npm link in the docker container to hit the right place tho
+
+#### Current Solution
+  To develop one of the Storj core apps against an unpublished local node_module, you add a git submodule to the .../vendor directory.
+  The app when started does the following...
+  + Runs a shell script that iterates through each of the directories in that folder
+  + rm -rf's that node module from the apps node_modules folder inside of the container
+  + copies the new module from the vendor folder into the node_modules directory
+  + Repeats this for each module in the vendors folder until done
+  + runs npm rebuild
+
 ### Renter Whitelist
   when renter comes up it should expose its renter ID to the farmers somehow so that when they come up they can be put on the whitelist for every farmer
   or we sould find how to disable the requirement of the whitelist

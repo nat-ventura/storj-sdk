@@ -2,7 +2,7 @@
 # Get the internal network address for the bridge-gui-ssl-proxy and
 # add a host entry for it
 
-SSL_PROXY_CONTAINER_ID=$(docker ps | grep bridge | cut -d " " -f1)
+SSL_PROXY_CONTAINER_ID=$(docker ps | grep bridge-gui-ssl-proxy | cut -d " " -f1)
 NET_NAME=$(./scripts/get_net_name.sh)
 SSL_PROXY_IP=$(docker inspect $SSL_PROXY_CONTAINER_ID | jq -r ".[0].NetworkSettings.Networks.$NET_NAME.IPAddress")
 

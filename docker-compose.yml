@@ -37,11 +37,14 @@ services:
     environment:
       - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
     restart: always
+    ports:
+      - "4000"
   share:
     build: ./share
     volumes:
       - ./share/instances:/share/instances
       - ./share/templates:/share/templates
+      - ./vendor:/usr/src/vendor
     environment:
       - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
@@ -71,7 +74,7 @@ services:
       - "8080"
     environment:
       - APIHOST_VAL=bridge
-      - APIPORT_VAL=80
+      - APIPORT_VAL=8080
       - APIPROTOCOL_VAL=http
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_9jNycwEK9kRyCEbKpbMJI1rO
