@@ -128,7 +128,7 @@ Please excuse our mess while we gather our thoughts. This SDK is under active de
 + Saving the state of your configuration (push to a branch)
 + Sharing your configuration with someone else (allow another user to create their own branch based on yours or to simply pull the versions of software that you are using without changing anything else)
 
-### Using the CLI aginst local setup
+### Using the CLI against local setup
 Configuration
 -------------
 `$ export STORJ_BRIDGE=http://localhost:8080`
