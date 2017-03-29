@@ -25,13 +25,6 @@ OptionParser.new do |opts|
   # Configure default options
   defaults[:environment] = 'development'
 
-  # Setup
-  opts.separator ''
-  opts.separator 'Setup'
-  # The setup feature is a work in progress...
-  #opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { options[:setup] = true }
-  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { options[:init] = true }
-
   # Cluster Control
   opts.separator ''
   opts.separator 'Cluster Control'
@@ -39,6 +32,14 @@ OptionParser.new do |opts|
   opts.on('-c [action]', '--cluster', 'Run an action on the local cluster - Actions: up, down') { |v| options[:cluster] = v || 'up' }
   opts.on('-l [service]', '--logs', 'Show logs from the cluster (defaults to all services)') { |v| options[:logs] = v || 'all' }
   opts.on('-r [service]', '--restart', 'Restart services (defaults to all services)') { |v| options[:restart] = v || 'all' }
+
+  # Setup
+  opts.separator ''
+  opts.separator 'Setup'
+  # The setup feature is a work in progress...
+  #opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { options[:setup] = true }
+  opts.on('-I', '--vpnimport', 'Import VPN configuration') { options[:vpnimport] = true }
+  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { options[:init] = true }
 
   # Service & Vendor Package Version Control
   # Here we'll control updating versions (branch, hash, tag) of the storj service submodules
@@ -73,6 +74,7 @@ OptionParser.new do |opts|
 
   opts.separator ''
   opts.separator 'Global Options'
+  opts.on('-x', '--no-cache', 'Run build actions with no-cache option to pull latest dependencies') { |v| options[:nocache] == true }
   opts.on('-y', '--yes', 'Do not prompt to confirm any actions') { |v| options[:yes] = true }
 
   opts.on_tail('-h', '--help', 'Show this message') do
@@ -167,6 +169,10 @@ if options[:setup]
   rm docker_dmg_file
 end
 
+if options[:vpnimport]
+  run_command('open vpn/storj-local.ovpn')
+end
+
 if options[:init]
   output = `./scripts/auto_add_user.sh`
   puts output
@@ -174,11 +180,27 @@ end
 
 if options[:cluster]
   if options[:cluster] == 'up'
-
+    run_command('Bringing up cluster', 'docker-compose up -d')
   end
 
   if options[:cluster] == 'down'
+    run_command('Bringing down cluster', 'docker-compose down')
+  end
+end
 
+if options[:logs]
+  if options[:logs] == 'all'
+    run_command('docker-compose logs -f')
+  else
+    run_command("docker-compose logs -f #{options[:logs]}")
+  end
+end
+
+if options[:restart]
+  if options[:restart] == 'all'
+    run_command('Restarting all services', 'docker-compose restart')
+  else
+    run_command("Restarting service #{options[:restart]}", "docker-compose restart #{options[:restart]}")
   end
 end
 
@@ -228,32 +250,31 @@ if options[:update]
 end
 
 if options[:build]
+  build_opts = ''
+  if options[:nocache]
+    build_opts += ' --no-cache'
+  end
   #environment = options[:environment]  || 'prod'
+  if options[:build] == 'services'
+    if options[:nocache]
+      run_command('rebuild all with no cache', 'docker-compose build --no-cache')
+    end
 
-  if options[:os]
-    run_command('build a new os base image', 'docker build -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .')
-  end
+    run_command('build all services', 'docker-compose up --build -d')
 
-  if options[:deps]
-    run_command('build a new dependencies base image', 'docker build -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .')
-  end
+  elsif options[:build] == 'baseall'
+    run_command('build a new os base image', "docker build #{build_opts} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
+    run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
+  elsif options[:build] == 'os'
+    run_command('build a new os base image', "docker build #{build_otps} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
+  elsif options[:build] == 'deps'
+    run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
+  else
+    if options[:nocache]
+      run_command("build service #{options[:build]} with no-cache", "docker-compose build --no-cache #{options[:build]}")
+    end
 
-  if options[:app]
-    app_name = options[:app]
-    app_version = get_nodejs_project_version()
-
-    run_command('build a new app image', "docker build -t storjlabs/#{app_name}:#{app_version} -t storjlabs/#{app_name}:latest -f ./dockerfiles/#{app_name}.dockerfile .")
-  end
-
-  # If no environment, os or deps selected, notify the user that they should choose one
-end
-
-if options[:run]
-  puts "Run: #{options[:run]}"
-  if options[:run] == 'local'
-    puts "Running local"
-    #run_command("docker run storjlabs/#{app_name}:latest")
-    run_command("docker-compose up --build -d")
+    run_command("build service #{options[:build]}", "docker-compose up --build -d #{options[:build]}")
   end
 end
 

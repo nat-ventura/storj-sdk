@@ -12,9 +12,6 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 + Ruby ( this is temporary )
 + jq ( `apt-get install jq` or `brew install jq` )
 
-### SDK Script (./sdk)
-The sdk script in the root directory of this project is a work in progress and is not ready for use.
-
 ### Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
 
@@ -23,6 +20,9 @@ To check out the repository, you'll need to add the `recursive` flag so that all
  or if you've already checked out the repo without --recursive, try...
 
 + `git submodule update --init --recursive`
+
+### SDK Script (./sdk)
+The `sdk` script wraps most of the functionality that you will need when using docker, docker-compose and vpn for these services.
 
 ### Bring up Cluster
 To bring up the cluster locally, we use docker-compose.
@@ -41,7 +41,23 @@ To access your cluster (from OSX) you'll need to install an OpenVPN compatible V
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
 #### Bridge
-To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. A script is provided to programatically determine the URL of your local bridge and can be found here: `./scripts/get_local_bridge.sh`. You can go ahead and export the bridge variable in one go like so: `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
+Quick
+=====
+
+From the root of the sdk, run the following command:
+`. scripts/setbr`
+
+Manual
+======
+To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address.
+
+A script is provided to programatically determine the URL of your local bridge and can be found here:
+`./scripts/get_local_bridge.sh`.
+
+You can go ahead and export the bridge variable in one go like so:
+
+`eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
+This is what the `setbr` script from above does.
 
 #### Bridge GUI
 Currently to access the bridge gui, you will need to determine the IP address of the bridge-gui-ssl-proxy and add it as a host entry in your /etc/hosts file. We are working on a way to automate this in the future.
