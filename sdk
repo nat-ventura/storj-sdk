@@ -20,7 +20,7 @@ defaults = {}
 ARGV << '-h' if ARGV.empty?
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: build [options]"
+  opts.banner = "Usage: sdk [options]"
 
   # Configure default options
   defaults[:environment] = 'development'
@@ -28,41 +28,48 @@ OptionParser.new do |opts|
   # Setup
   opts.separator ''
   opts.separator 'Setup'
+  # The setup feature is a work in progress...
+  #opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { options[:setup] = true }
+  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { options[:init] = true }
 
-  opts.on('-d', '--deps', 'Set up local environment for building and working with docker images') { |v| options[:setup] = true }
-  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { |v| options[:init] = true }
+  # Cluster Control
+  opts.separator ''
+  opts.separator 'Cluster Control'
+
+  opts.on('-c [action]', '--cluster', 'Run an action on the local cluster - Actions: up, down') { |v| options[:cluster] = v || 'up' }
+  opts.on('-l [service]', '--logs', 'Show logs from the cluster (defaults to all services)') { |v| options[:logs] = v || 'all' }
+  opts.on('-r [service]', '--restart', 'Restart services (defaults to all services)') { |v| options[:restart] = v || 'all' }
+
+  # Service & Vendor Package Version Control
+  # Here we'll control updating versions (branch, hash, tag) of the storj service submodules
+  # as well as dependency submodules
+  opts.separator ''
+  opts.separator 'Version Management'
+  opts.separator 'In the following context, version can refer to a branch, hash, or tag'
+  opts.on('-v [storj service]@[version]', '--sversion', 'Set the version of a storj service') { |v| options[:version] = v || false }
+  opts.on('-d [dependency]@[version]', '--dependency', 'Set the version of a dependency') { |v| options[:dependency] = v || false }
+  opts.on('-u [module]', '--update', 'Update local module from remote (defaults to all)') { |v| options[:update] = v || 'all' }
 
   # Building
   opts.separator ''
-  opts.separator "Actions"
+  opts.separator 'Building & Publishing'
 
-  opts.on('-u [module]', '--update', 'Update local module from remote') { |v| options[:update] = v || 'all' }
-  opts.on('-b', '--build', 'Build a docker image') { |v| options[:build] = true }
-  opts.on('-r [MODE]', '--run', 'Run a development instance',
-          '   Run modes: (* = default)',
-          '     * local - run all services locally',
-          '       hybrid - run app container locally and use remote dependencies',
-          '       deps - run the dependencies container for troubleshooting',
-          '       os - run the os container for troubleshooting') do |mode|
-            options[:run] = mode || 'local'
-          end
+  opts.on('-b [image]', '--build', 'Build a docker image',
+          '   Image Types: os, deps, *all, [service]') { |v| options[:build] = v || 'all' }
+
   opts.on('-p', '--push', 'Push a docker image for an application to the docker hub') { |v| options[:push] = true }
-  opts.on('-c', '--clean', 'Clean local state') { |v| options[:clean] = v || 'all' }
+  opts.on('-C', '--clean', 'Clean local state') { |v| options[:clean] = v || 'all' }
 
   opts.separator ''
+  opts.separator 'Common options'
   opts.separator "To build, run, or push  you must choose either an environment to build the application for"
   opts.on('-e', '--environment', 'Environment for which we are building our application') { |v| options[:build] = v }
-  opts.on('-o', '--os', 'Build the base OS docker image') { |v| options[:os] = true }
-  opts.on('-d', '--deps', 'Build the dependencies docker image') { |v| options[:deps] = true }
-  opts.on('-a [APP NAME]', '--app', 'Build application container') { |v| options[:app] = v }
-  opts.on('-A', '--all', 'Build all images. Defaults to development environment') { |v| options[:all] = true }
 
-
-  # Testing
+  # Tests & Benchmarking
   opts.separator ''
-  opts.separator 'Testing'
+  opts.separator 'Testing ( coming soon... )'
 
-  opts.on('-t', '--test', 'Run tests in the app docker container') { |v| options[:test] = true }
+  opts.on('-t [type]', '--test', 'Run tests - Test Types: *integration, unit') { |v| options[:test] = true }
 
   opts.separator ''
   opts.separator 'Global Options'
@@ -165,6 +172,16 @@ if options[:init]
   puts output
 end
 
+if options[:cluster]
+  if options[:cluster] == 'up'
+
+  end
+
+  if options[:cluster] == 'down'
+
+  end
+end
+
 if options[:clean]
   if options[:clean] == 'all'
     clean_share
@@ -191,7 +208,7 @@ if options[:update]
 end
 
 if options[:build]
-  environment = options[:environment]  || 'prod'
+  #environment = options[:environment]  || 'prod'
 
   if options[:os]
     run_command('build a new os base image', 'docker build -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .')

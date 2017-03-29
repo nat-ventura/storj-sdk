@@ -1,10 +1,19 @@
-# storj-sdk
-The Storj Developer Kit
+Storj Developer Kit
+===================
 
-## SDK Script
-The sdk script in the root directory of this project is a work in progress and is not ready for use.
+The Storj Developer Kit is designed to enable both Team Members at Storj Labs and Community Members alike to quickly set up a fully working, complete and consistent environment with which to develop, test and experiment.
 
 ## Setup / Quick Start
+
+### Dependencies
+
++ A VPN client (see below under Access Cluster)
++ NodeJS v6.9.5 or Greater
++ Ruby ( this is temporary )
++ jq ( `apt-get install jq` or `brew install jq` )
+
+### SDK Script (./sdk)
+The sdk script in the root directory of this project is a work in progress and is not ready for use.
 
 ### Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
@@ -24,7 +33,10 @@ To bring up the cluster in the background
 + `docker-compose up -d`
 
 ### Access Cluster
-To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client such as Tunnelblick.
+To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client.
+
++ [Tunnelblick](https://tunnelblick.net/downloads.html)
++ [Viscosity](https://www.sparklabs.com/viscosity/download/)
 
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
