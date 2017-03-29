@@ -40,7 +40,15 @@ To access your cluster (from OSX) you'll need to install an OpenVPN compatible V
 
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
+#### Local SSL
+To access services locally over SSL, you will need to set hostnames for them in your local hosets file. The process has been scripted which can be run from the root of the storj-sdk as follows:
+
+`./scripts/set_host_entries.sh`
+
 #### Bridge
+
+##### Non SSL
+
 Quick
 =====
 
@@ -59,24 +67,11 @@ You can go ahead and export the bridge variable in one go like so:
 `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
 This is what the `setbr` script from above does.
 
+##### SSL
+To access the local bridge via ssl, you will need to have run the `set_host_entries.sh` script. You should then be able to use `https://bridge-ssl-proxy` in place of the address obtained by the `setbr` or `get_local_bridge.sh` scripts.
+
 #### Bridge GUI
-Currently to access the bridge gui, you will need to determine the IP address of the bridge-gui-ssl-proxy and add it as a host entry in your /etc/hosts file. We are working on a way to automate this in the future.
-
-The process has been scripted which can be run from the root of the storj-sdk as follows:
-
-`./scripts/set_bridge_gui_hosts_entry.sh`
-
-#### Steps
-
-+ Install an OpenVPN compatible VPN client
-
-+ Run or Import the OpenVPN config from `[root_of_sdk]/vpn/storj-local.ovpn`
-
-+ Init your cluster which adds a user, activates it and signs you in by typing `./sdk -i` from the root of the SDK
-
-+ Export the STORJ_BRIDGE environment variable as instructed after running the init
-
-+ Access the bridge as you would normally using your local Storj CLI (core-cli) keeping in mind that you will need to export the STORJ_BRIDGE environment variable in any terminal that you wish to use the local bridge from
+Once the `set_host_entries.sh` script has been run, you will need to browse to `https://bridge-ssl-proxy` and accept the certificate warning. Once that has been accepted you can then browse to `https://bridge-gui-ssl-proxy` and log in with the test user information that was given to you when running `sdk -i` to init your cluster.
 
 
 ## Try it Out

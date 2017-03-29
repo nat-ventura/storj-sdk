@@ -73,20 +73,31 @@ services:
     ports:
       - "8080"
     environment:
-      - APIHOST_VAL=bridge
-      - APIPORT_VAL=8080
-      - APIPROTOCOL_VAL=http
+      - APIHOST_VAL=bridge-ssl-proxy
+      - APIPORT_VAL=443
+      - APIPROTOCOL_VAL=https
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
-      - APOLLO_CLIENT_URL_VAL=https://bridge-gui:3000/graphql
+      - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
-      - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui
+      - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui-ssl-proxy
     command: ["./dockerfiles/scripts/start-bridge-gui"]
   bridge-gui-ssl-proxy:
     image: storjlabs/nginx-ssl-proxy:latest
     environment:
       - ENABLE_SSL=true
       - TARGET_SERVICE=bridge-gui:8080
+    ports:
+      - "443"
+    volumes:
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/dockerfiles/scripts/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+  bridge-ssl-proxy:
+    image: storjlabs/nginx-ssl-proxy:latest
+    environment:
+      - ENABLE_SSL=true
+      - TARGET_SERVICE=bridge:8080
     ports:
       - "443"
     volumes:
