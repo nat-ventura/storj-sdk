@@ -187,6 +187,22 @@ if options[:clean]
     clean_share
     clean_mongo
   end
+
+  if options[:clean] == 'docker'
+    clean_docker
+  end
+
+  if options[:clean] == 'share'
+    clean_share
+  end
+
+  if options[:clean] == 'mongo'
+    clean_mongo
+  end
+
+  if options[:clean] == 'vpn'
+    clean_vpn
+  end
 end
 
 def clean_docker
@@ -199,6 +215,10 @@ end
 
 def clean_mongo
   run_command('clean mongo', 'git clean -fdx mongodb/data/')
+end
+
+def clean_vpn
+  run_command('clean vpn', 'git clean -fdx vpn/config/ && rm vpn/storj-local.ovpn')
 end
 
 if options[:update]
