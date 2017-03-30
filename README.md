@@ -45,28 +45,13 @@ To access your cluster (from OSX) you'll need to install an OpenVPN compatible V
 
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
-#### Local SSL
-To access services locally over SSL, you will need to set hostnames for them in your local hosets file. The process has been scripted which can be run from the root of the storj-sdk as follows:
-
-`./scripts/set_host_entries.sh`
-
-#### Bridge
-[https://bridge-ssl-proxy](https://bridge-ssl-proxy)
-
-#### Bridge GUI
-[https://bridge-gui-ssl-proxy](https://bridge-gui-ssl-proxy)
-
-##### Non SSL
-[http://bridge](http://bridge)
-
-Quick
-=====
+#### Storj CLI
+To use the CLI, you'll need to set the STORJ_BRIDGE environment variable to the address of your local bridge.
 
 From the root of the sdk, run the following command:
 `. scripts/setbr`
 
-Manual
-======
+##### Behind the Scenes
 To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address.
 
 A script is provided to programatically determine the URL of your local bridge and can be found here:
@@ -77,11 +62,24 @@ You can go ahead and export the bridge variable in one go like so:
 `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
 This is what the `setbr` script from above does.
 
-##### SSL
+#### Local SSL
+To access services locally over SSL, you will need to set hostnames for them in your local hosets file. The process has been scripted which can be run from the root of the storj-sdk as follows:
+
+`./scripts/set_host_entries.sh`
+
+Once the `set_host_entries.sh` script has been run, you will need to browse to `https://bridge-ssl-proxy` and accept the certificate warning. Once that has been accepted you can then browse to `https://bridge-gui-ssl-proxy` and log in with the test user information that was given to you when running `sdk -i` to init your cluster.
+
+##### Behind the Scenes
 To access the local bridge via ssl, you will need to have run the `set_host_entries.sh` script. You should then be able to use `https://bridge-ssl-proxy` in place of the address obtained by the `setbr` or `get_local_bridge.sh` scripts.
 
+#### Bridge
+[https://bridge-ssl-proxy](https://bridge-ssl-proxy)
+
 #### Bridge GUI
-Once the `set_host_entries.sh` script has been run, you will need to browse to `https://bridge-ssl-proxy` and accept the certificate warning. Once that has been accepted you can then browse to `https://bridge-gui-ssl-proxy` and log in with the test user information that was given to you when running `sdk -i` to init your cluster.
+[https://bridge-gui-ssl-proxy](https://bridge-gui-ssl-proxy)
+
+##### Non SSL
+[http://bridge](http://bridge)
 
 
 ## Try it Out
@@ -228,38 +226,38 @@ Service Containers
 ## Implementation
 
 ### Tasks
-[x] 1) Get all services working each with one instance
-[x] 1.1) Clean up the repo, make sure nothing unwanted is getting comitted and push
-[x] 1.2) Confirm that the setup instructions work from a clean copy of master
-[x]   + probably involve git pull --recurse-submodules
-[x]   + for the first time you need to use --init
-[x]   + git submodule update --init --recursive
-[x] 2) Get local file upload/download working
-[x] 3) Ensure that rebuilding specific containers is resiliant for each one (such that IP's etc... are updated on restart)
-[x] 4) Work on docker-compose scale for farmers
-[x]  + Add unique index for each farmer so scaling works
-[ ] 5) Rename and update entry script to assist in the following
-[x]   + Bringing the cluster up and down
-[x]   + Rebuilding the entire cluster and restarting
-[x]   + Run the preconfigured cli from within a docker container (link binary from host? Or launch a container?
-[ ]  + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
-[x]  + Rebuilding a particular container and restarting that service
-[x]  + Viewing logs for all or each service
-[ ]  + List addresses and ports of all services along with service type
-[ ]6) Convert mongodb container to sharded replicaset with authentication enabled
-[ ]  + This makes testing more like production
-[ ]7) Tests
-[ ]  + Test user creation
-[ ]  + Test user activation
-[ ]  + Test file upload
-[ ]  + Test file download
-[ ]8) Take Snapshots of Cluster State
-[ ]  + Get the state of the cluster the way that you want it
-[ ]  + Copy the mongodb data somewhere
-[ ]  + Copy the farmer keys and data somewhere, etc...
-[x]9) Cleanup / Reset
-[x]  + Reset the state of the DB
-[x]  + Reset the state of the Farmer
+- [x] 1) Get all services working each with one instance
+- [x] 1.1) Clean up the repo, make sure nothing unwanted is getting comitted and push
+- [x] 1.2) Confirm that the setup instructions work from a clean copy of master
+- [x]   + probably involve git pull --recurse-submodules
+- [x]   + for the first time you need to use --init
+- [x]   + git submodule update --init --recursive
+- [x] 2) Get local file upload/download working
+- [x] 3) Ensure that rebuilding specific containers is resiliant for each one (such that IP's etc... are updated on restart)
+- [x] 4) Work on docker-compose scale for farmers
+- [x]  + Add unique index for each farmer so scaling works
+- [ ] 5) Rename and update entry script to assist in the following
+- [x]   + Bringing the cluster up and down
+- [x]   + Rebuilding the entire cluster and restarting
+- [x]   + Run the preconfigured cli from within a docker container (link binary from host? Or launch a container?
+- [ ]  + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
+- [x]  + Rebuilding a particular container and restarting that service
+- [x]  + Viewing logs for all or each service
+- [ ]  + List addresses and ports of all services along with service type
+- [ ]6) Convert mongodb container to sharded replicaset with authentication enabled
+- [ ]  + This makes testing more like production
+- [ ]7) Tests
+- [ ]  + Test user creation
+- [ ]  + Test user activation
+- [ ]  + Test file upload
+- [ ]  + Test file download
+- [ ]8) Take Snapshots of Cluster State
+- [ ]  + Get the state of the cluster the way that you want it
+- [ ]  + Copy the mongodb data somewhere
+- [ ]  + Copy the farmer keys and data somewhere, etc...
+- [x]9) Cleanup / Reset
+- [x]  + Reset the state of the DB
+- [x]  + Reset the state of the Farmer
 
 ## Known Issues
 
