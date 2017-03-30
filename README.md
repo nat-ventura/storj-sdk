@@ -7,11 +7,15 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 
 ### Dependencies
 
+#### Required
+
 + A VPN client (see below under Access Cluster)
-+ NodeJS v6.9.5 or Greater
-+ Ruby ( this is temporary )
 + jq ( `apt-get install jq` or `brew install jq` )
 + expect ( `apt-get install expect` or `brew install expect` )
+
+#### Optional
++ Ruby ( this is temporary ) - Required to use the ./sdk script
++ NodeJS v6.9.5 or Greater - Required to run the storj cli locally
 
 ### SDK Script (./sdk)
 The `sdk` script wraps most of the functionality that you will need when using docker, docker-compose and vpn for these services.
@@ -25,7 +29,7 @@ To check out the repository, you'll need to add the `recursive` flag so that all
 
 + `git submodule update --init --recursive`
 
-### Bring up Cluster
+### 2) Bring up Cluster
 To bring up the cluster locally, we use docker-compose.
 
 + `docker-compose up`
@@ -33,7 +37,7 @@ To bring up the cluster locally, we use docker-compose.
 To bring up the cluster in the background
 + `docker-compose up -d`
 
-### Access Cluster
+### 3) Access Cluster
 To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client.
 
 + [Tunnelblick](https://tunnelblick.net/downloads.html)
@@ -47,8 +51,13 @@ To access services locally over SSL, you will need to set hostnames for them in 
 `./scripts/set_host_entries.sh`
 
 #### Bridge
+[https://bridge-ssl-proxy](https://bridge-ssl-proxy)
+
+#### Bridge GUI
+[https://bridge-gui-ssl-proxy](https://bridge-gui-ssl-proxy)
 
 ##### Non SSL
+[http://bridge](http://bridge)
 
 Quick
 =====
