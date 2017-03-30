@@ -65,8 +65,7 @@ def get_options
     opts.separator ''
     opts.separator 'Version Management'
     opts.separator 'In the following context, version can refer to a branch, hash, or tag'
-    opts.on('-v [storj service]@[version]', '--sversion', 'Set the version of a storj service') { |v| options[:version] = v || false }
-    opts.on('-d [dependency]@[version]', '--dependency', 'Set the version of a dependency') { |v| options[:dependency] = v || false }
+    opts.on('-v [service]@[version]', '--sversion', Array, 'Set the version of a storj service') { |v| options[:version] = v || 'list' }
     opts.on('-u [module]', '--update', 'Update local module from remote (defaults to all)') { |v| options[:update] = v || 'all' }
 
     # Building
@@ -83,6 +82,7 @@ def get_options
     opts.separator 'Common options'
     opts.separator "To build, run, or push  you must choose either an environment to build the application for"
     opts.on('-e', '--environment', 'Environment for which we are building our application') { |v| options[:build] = v }
+    opts.on('-d', '--debug', 'Enable debug logging') { |v| options[:debug] = v }
 
     # Tests & Benchmarking
     opts.separator ''
@@ -127,17 +127,17 @@ def run_command(intent, command = '')
 
   if confirm
     response = yesno("Are you sure you want to #{intent}?");
+
     if !response then abort "Aborting..." end
   end
 
-  output = []
-  r, io = IO.pipe
-  fork do
-    system(command, out: io, err: :out)
-  end
-  io.close
-  r.each_line{|l| puts l; output << l.chomp}
-  p output
+  result = {}
+
+  result['output'] = `#{command}`
+  result['success'] = $?.success?
+  result['status'] = $?.exitstatus
+
+  return result
 end
 
 def get_nodejs_project_version()
@@ -149,6 +149,9 @@ end
 
 def start
   options = get_options
+
+  $yes_to_all = options[:yes]
+  $debug = options[:debug]
 
   if options[:setup]
     # Determine the OS we're working with
@@ -237,6 +240,37 @@ def start
     end
   end
 
+  if options[:version]
+    log_it('Updating service versions...')
+
+    log_it("Version string is: #{options[:version]}", :debug)
+
+    if options[:version] == 'list'
+      log_it('Current module versions')
+      result = run_command("git submodule status")
+      puts("#{result['output']}")
+    else
+      services = parse_services(options[:version])
+      log_it("Services is: #{services}", :debug)
+
+      if services
+        services.each do |service|
+          if service['name'] && service['version']
+            # We should check to see if this is a core service or a dependency
+            # If it is a vendored dependency, check to see if we have a submodule for it already
+            # If not, check out the submodule into the vendor folder and continue
+
+            run_command("git --git-dir=./.git/modules/#{service['name']} fetch")
+            run_command("git --git-dir=./.git/modules/#{service['name']} checkout #{service['version']}")
+            log_it("Updated version of #{service['name']} to #{service['version']} locally. Don't forget to commit and push if desired")
+          else
+            log_it('Please provide a service name and version', :error)
+          end
+        end
+      end
+    end
+  end
+
   if options[:update]
     # Should add the ability to do sdk -u bridge@v4.0.0 or somehow define local module
     # Currently default is all
@@ -316,13 +350,37 @@ def clean_vpn
   run_command('clean vpn', 'git clean -fdx vpn/config/ && rm vpn/storj-local.ovpn')
 end
 
+def parse_services(services)
+  services_arry = []
+
+  # Then see if a version was included and split by that if necessary
+  services.each do |svc|
+    split_svc = svc.split("@")
+    svc_name = split_svc[0]
+
+    if split_svc.length == 2
+      svc_version = split_svc[1]
+    end
+
+    svc_obj = {
+      "name" => svc_name,
+      "version" => svc_version
+    }
+
+    services_arry.push(svc_obj)
+  end
+
+  # How do we handle no version? How do we determine latest?
+
+  return services_arry
+end
 
 def log_it(log_line, level = :info)
   color = $log_levels[level]['color']
   level_string = $log_levels[level]['string']
 
   # Dont log if the line is debug and we dont have the verbose flag
-  if level == :debug && !$verbose
+  if level == :debug && !$debug
     return
   end
 
