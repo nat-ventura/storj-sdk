@@ -11,77 +11,98 @@ require 'pp'
 require 'fileutils'
 require 'pathname'
 require 'highline/import'
+require 'colorize'
 
 include FileUtils
 
-options = {}
-defaults = {}
+# Log levels
+$log_levels = {
+  :info => {
+    'string' => 'info',
+    'color' => :green
+  },
+  :debug => {
+    'string' => 'debug',
+    'color' => :yellow
+  },
+  :error => {
+    'string' => 'error',
+    'color' => :red
+  }
+}
 
 ARGV << '-h' if ARGV.empty?
 
-OptionParser.new do |opts|
-  opts.banner = "Usage: sdk [options]"
+def get_options
+  defaults = {}
+  options = {}
 
-  # Configure default options
-  defaults[:environment] = 'development'
+  OptionParser.new do |opts|
+    opts.banner = "Usage: sdk [options]"
 
-  # Cluster Control
-  opts.separator ''
-  opts.separator 'Cluster Control'
+    # Configure default options
+    defaults[:environment] = 'development'
 
-  opts.on('-c [action]', '--cluster', 'Run an action on the local cluster - Actions: up, down') { |v| options[:cluster] = v || 'up' }
-  opts.on('-l [service]', '--logs', 'Show logs from the cluster (defaults to all services)') { |v| options[:logs] = v || 'all' }
-  opts.on('-r [service]', '--restart', 'Restart services (defaults to all services)') { |v| options[:restart] = v || 'all' }
+    # Cluster Control
+    opts.separator ''
+    opts.separator 'Cluster Control'
 
-  # Setup
-  opts.separator ''
-  opts.separator 'Setup'
-  # The setup feature is a work in progress...
-  #opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { options[:setup] = true }
-  opts.on('-I', '--vpnimport', 'Import VPN configuration') { options[:vpnimport] = true }
-  opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { options[:init] = true }
+    opts.on('-c [action]', '--cluster', 'Run an action on the local cluster - Actions: up, down') { |v| options[:cluster] = v || 'up' }
+    opts.on('-l [service]', '--logs', 'Show logs from the cluster (defaults to all services)') { |v| options[:logs] = v || 'all' }
+    opts.on('-r [service]', '--restart', 'Restart services (defaults to all services)') { |v| options[:restart] = v || 'all' }
 
-  # Service & Vendor Package Version Control
-  # Here we'll control updating versions (branch, hash, tag) of the storj service submodules
-  # as well as dependency submodules
-  opts.separator ''
-  opts.separator 'Version Management'
-  opts.separator 'In the following context, version can refer to a branch, hash, or tag'
-  opts.on('-v [storj service]@[version]', '--sversion', 'Set the version of a storj service') { |v| options[:version] = v || false }
-  opts.on('-d [dependency]@[version]', '--dependency', 'Set the version of a dependency') { |v| options[:dependency] = v || false }
-  opts.on('-u [module]', '--update', 'Update local module from remote (defaults to all)') { |v| options[:update] = v || 'all' }
+    # Setup
+    opts.separator ''
+    opts.separator 'Setup'
+    # The setup feature is a work in progress...
+    #opts.on('-s', '--setup', 'Set up local environment for building and working with docker images') { options[:setup] = true }
+    opts.on('-I', '--vpnimport', 'Import VPN configuration') { options[:vpnimport] = true }
+    opts.on('-i', '--init', 'Create a user, activate that user, then log in and provide bridge info') { options[:init] = true }
 
-  # Building
-  opts.separator ''
-  opts.separator 'Building & Publishing'
+    # Service & Vendor Package Version Control
+    # Here we'll control updating versions (branch, hash, tag) of the storj service submodules
+    # as well as dependency submodules
+    opts.separator ''
+    opts.separator 'Version Management'
+    opts.separator 'In the following context, version can refer to a branch, hash, or tag'
+    opts.on('-v [storj service]@[version]', '--sversion', 'Set the version of a storj service') { |v| options[:version] = v || false }
+    opts.on('-d [dependency]@[version]', '--dependency', 'Set the version of a dependency') { |v| options[:dependency] = v || false }
+    opts.on('-u [module]', '--update', 'Update local module from remote (defaults to all)') { |v| options[:update] = v || 'all' }
 
-  opts.on('-b [image]', '--build', 'Build a docker image',
-          '   Image Types: os, deps, *all, [service]') { |v| options[:build] = v || 'all' }
+    # Building
+    opts.separator ''
+    opts.separator 'Building & Publishing'
 
-  opts.on('-p', '--push', 'Push a docker image for an application to the docker hub') { |v| options[:push] = true }
-  opts.on('-C', '--clean', 'Clean local state') { |v| options[:clean] = v || 'all' }
+    opts.on('-b [image]', '--build', 'Build a docker image',
+            '   Image Types: os, deps, *all, [service]') { |v| options[:build] = v || 'all' }
 
-  opts.separator ''
-  opts.separator 'Common options'
-  opts.separator "To build, run, or push  you must choose either an environment to build the application for"
-  opts.on('-e', '--environment', 'Environment for which we are building our application') { |v| options[:build] = v }
+    opts.on('-p', '--push', 'Push a docker image for an application to the docker hub') { |v| options[:push] = true }
+    opts.on('-C', '--clean', 'Clean local state') { |v| options[:clean] = v || 'all' }
 
-  # Tests & Benchmarking
-  opts.separator ''
-  opts.separator 'Testing ( coming soon... )'
+    opts.separator ''
+    opts.separator 'Common options'
+    opts.separator "To build, run, or push  you must choose either an environment to build the application for"
+    opts.on('-e', '--environment', 'Environment for which we are building our application') { |v| options[:build] = v }
 
-  opts.on('-t [type]', '--test', 'Run tests - Test Types: *integration, unit') { |v| options[:test] = true }
+    # Tests & Benchmarking
+    opts.separator ''
+    opts.separator 'Testing ( coming soon... )'
 
-  opts.separator ''
-  opts.separator 'Global Options'
-  opts.on('-x', '--no-cache', 'Run build actions with no-cache option to pull latest dependencies') { |v| options[:nocache] == true }
-  opts.on('-y', '--yes', 'Do not prompt to confirm any actions') { |v| options[:yes] = true }
+    opts.on('-t [type]', '--test', 'Run tests - Test Types: *integration, unit') { |v| options[:test] = true }
 
-  opts.on_tail('-h', '--help', 'Show this message') do
-    puts opts
-    exit
-  end
-end.parse!
+    opts.separator ''
+    opts.separator 'Global Options'
+    opts.on('-x', '--no-cache', 'Run build actions with no-cache option to pull latest dependencies') { |v| options[:nocache] == true }
+    opts.on('-y', '--yes', 'Do not prompt to confirm any actions') { |v| options[:yes] = true }
+
+    opts.on_tail('-h', '--help', 'Show this message') do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  return options
+end
 
 def yesno(prompt = 'Continue?', default = true)
   a = ''
@@ -126,106 +147,156 @@ def get_nodejs_project_version()
   return package_version
 end
 
-if options[:setup]
-  # Determine the OS we're working with
+def start
+  options = get_options
 
-  # Check to see if docker is already installed
+  if options[:setup]
+    # Determine the OS we're working with
 
-  # If not, install docker
+    # Check to see if docker is already installed
 
-  # Download the latest docker for mac image
-  docker_dmg_url = "https://download.docker.com/mac/stable/Docker.dmg"
-  docker_dmg_file = "Docker.dmg"
-  download_path = "/tmp/#{docker_dmg_file}"
+    # If not, install docker
 
-  result = `wget -O #{download_path} #{docker_dmg_url}`
+    # Download the latest docker for mac image
+    docker_dmg_url = "https://download.docker.com/mac/stable/Docker.dmg"
+    docker_dmg_file = "Docker.dmg"
+    download_path = "/tmp/#{docker_dmg_file}"
 
-  # Mount the dmg
-  mount_point = Pathname.new "/Volumes/#{docker_dmg_file}"
-  result = `hdiutil attach -mountpoint #{mount_point} #{download_path}`
+    result = `wget -O #{download_path} #{docker_dmg_url}`
 
-  # Find the app in the mounted dmg
-  files = mount_point.entries.collect { |file| mount_point+file }
-  files.reject! { |file| ((file.to_s.include?(".app")) ? false : true) }
+    # Mount the dmg
+    mount_point = Pathname.new "/Volumes/#{docker_dmg_file}"
+    result = `hdiutil attach -mountpoint #{mount_point} #{download_path}`
 
-  # Copy the app to Applications folder
-  files.each { |app|
-    # Make sure the app doesn't already exist. If it does, prompt to overwrite/upgrade
-    if FileTest.exist?("/Applications/#{app}")
-      puts "It appears you already have #{app} installed. What shall we do?"
-      puts yesno("Overwrite existing application?");
+    # Find the app in the mounted dmg
+    files = mount_point.entries.collect { |file| mount_point+file }
+    files.reject! { |file| ((file.to_s.include?(".app")) ? false : true) }
+
+    # Copy the app to Applications folder
+    files.each { |app|
+      # Make sure the app doesn't already exist. If it does, prompt to overwrite/upgrade
+      if FileTest.exist?("/Applications/#{app}")
+        puts "It appears you already have #{app} installed. What shall we do?"
+        puts yesno("Overwrite existing application?");
+      end
+
+      puts "Copying #{app} to Applications folder"
+      `cp -a #{app} /tmp/Applications/`
+    }
+
+    # Unmount the dmg
+    puts "Unmounting #{docker_dmg_file}"
+    result = `hdiutil detach #{mount_point}`
+    puts "Finished installing #{docker_dmg_file}"
+
+    # Clean up after ourselves
+    rm docker_dmg_file
+  end
+
+  if options[:vpnimport]
+    run_command('open vpn/storj-local.ovpn')
+  end
+
+  if options[:init]
+    output = `./scripts/check_dependencies.sh`
+    puts output
+    output = `./scripts/auto_add_user.sh`
+    puts output
+  end
+
+  if options[:cluster]
+    if options[:cluster] == 'up'
+      run_command('Bringing up cluster', 'docker-compose up -d')
     end
 
-    puts "Copying #{app} to Applications folder"
-    `cp -a #{app} /tmp/Applications/`
-  }
-
-  # Unmount the dmg
-  puts "Unmounting #{docker_dmg_file}"
-  result = `hdiutil detach #{mount_point}`
-  puts "Finished installing #{docker_dmg_file}"
-
-  # Clean up after ourselves
-  rm docker_dmg_file
-end
-
-if options[:vpnimport]
-  run_command('open vpn/storj-local.ovpn')
-end
-
-if options[:init]
-  output = `./scripts/check_dependencies.sh`
-  puts output
-  output = `./scripts/auto_add_user.sh`
-  puts output
-end
-
-if options[:cluster]
-  if options[:cluster] == 'up'
-    run_command('Bringing up cluster', 'docker-compose up -d')
+    if options[:cluster] == 'down'
+      run_command('Bringing down cluster', 'docker-compose down')
+    end
   end
 
-  if options[:cluster] == 'down'
-    run_command('Bringing down cluster', 'docker-compose down')
-  end
-end
+  if options[:clean]
+    if options[:clean] == 'all'
+      clean_share
+      clean_mongo
+    end
 
-if options[:logs]
-  if options[:logs] == 'all'
-    run_command('docker-compose logs -f')
-  else
-    run_command("docker-compose logs -f #{options[:logs]}")
-  end
-end
+    if options[:clean] == 'docker'
+      clean_docker
+    end
 
-if options[:restart]
-  if options[:restart] == 'all'
-    run_command('Restarting all services', 'docker-compose restart')
-  else
-    run_command("Restarting service #{options[:restart]}", "docker-compose restart #{options[:restart]}")
-  end
-end
+    if options[:clean] == 'share'
+      clean_share
+    end
 
-if options[:clean]
-  if options[:clean] == 'all'
-    clean_share
-    clean_mongo
+    if options[:clean] == 'mongo'
+      clean_mongo
+    end
+
+    if options[:clean] == 'vpn'
+      clean_vpn
+    end
   end
 
-  if options[:clean] == 'docker'
-    clean_docker
+  if options[:update]
+    # Should add the ability to do sdk -u bridge@v4.0.0 or somehow define local module
+    # Currently default is all
+    run_command('git submodule update --recursive')
   end
 
-  if options[:clean] == 'share'
-    clean_share
+  if options[:build]
+    build_opts = ''
+    if options[:nocache]
+      build_opts += ' --no-cache'
+    end
+    #environment = options[:environment]  || 'prod'
+    if options[:build] == 'services'
+      if options[:nocache]
+        run_command('rebuild all with no cache', 'docker-compose build --no-cache')
+      end
+
+      run_command('build all services', 'docker-compose up --build -d')
+
+    elsif options[:build] == 'baseall'
+      run_command('build a new os base image', "docker build #{build_opts} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
+      run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
+    elsif options[:build] == 'os'
+      run_command('build a new os base image', "docker build #{build_otps} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
+    elsif options[:build] == 'deps'
+      run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
+    elsif options[:build] == 'all'
+      if options[:nocache]
+        run_command("build service #{options[:build]} with no-cache", "docker-compose build --no-cache")
+      end
+
+      run_command("build service #{options[:build]}", "docker-compose up --build -d")
+    else
+      log_it("Unknown service #{options[:build]}")
+    end
   end
 
-  if options[:clean] == 'mongo'
-    clean_mongo
+  if options[:restart]
+    if options[:restart] == 'all'
+      run_command('Restarting all services', 'docker-compose restart')
+    else
+      run_command("Restarting service #{options[:restart]}", "docker-compose restart #{options[:restart]}")
+    end
   end
 
-  if options[:clean] == 'vpn'
-    clean_vpn
+  if options[:logs]
+    if options[:logs] == 'all'
+      run_command('docker-compose logs -f')
+    else
+      run_command("docker-compose logs -f #{options[:logs]}")
+    end
+  end
+
+  if options[:push]
+    version = options[:versin] || 'latest'
+    app_name = options[:app]
+    image_name = "storjlabs/#{app_name}:#{version}"
+    puts "Pushing image '#{image_name}' to the docker hub"
+
+    run_command("docker push #{image_name}")
   end
 end
 
@@ -245,46 +316,17 @@ def clean_vpn
   run_command('clean vpn', 'git clean -fdx vpn/config/ && rm vpn/storj-local.ovpn')
 end
 
-if options[:update]
-  # Should add the ability to do sdk -u bridge@v4.0.0 or somehow define local module
-  # Currently default is all
-  run_command('git submodule update --recursive')
-end
 
-if options[:build]
-  build_opts = ''
-  if options[:nocache]
-    build_opts += ' --no-cache'
+def log_it(log_line, level = :info)
+  color = $log_levels[level]['color']
+  level_string = $log_levels[level]['string']
+
+  # Dont log if the line is debug and we dont have the verbose flag
+  if level == :debug && !$verbose
+    return
   end
-  #environment = options[:environment]  || 'prod'
-  if options[:build] == 'services'
-    if options[:nocache]
-      run_command('rebuild all with no cache', 'docker-compose build --no-cache')
-    end
 
-    run_command('build all services', 'docker-compose up --build -d')
-
-  elsif options[:build] == 'baseall'
-    run_command('build a new os base image', "docker build #{build_opts} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
-    run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
-  elsif options[:build] == 'os'
-    run_command('build a new os base image', "docker build #{build_otps} -t storjlabs/deps-os:1 -t storjlabs/deps-os:latest -f ./dockerfiles/os.base.dockerfile .")
-  elsif options[:build] == 'deps'
-    run_command('build a new dependencies base image', "docker build #{build_opts} -t storjlabs/deps-base:1 -t storjlabs/deps-base:latest -f ./dockerfiles/deps.base.dockerfile .")
-  else
-    if options[:nocache]
-      run_command("build service #{options[:build]} with no-cache", "docker-compose build --no-cache #{options[:build]}")
-    end
-
-    run_command("build service #{options[:build]}", "docker-compose up --build -d #{options[:build]}")
-  end
+  puts "[#{level_string}]".colorize(color) + " #{log_line}"
 end
 
-if options[:push]
-  version = options[:versin] || 'latest'
-  app_name = options[:app]
-  image_name = "storjlabs/#{app_name}:#{version}"
-  puts "Pushing image '#{image_name}' to the docker hub"
-
-  run_command("docker push #{image_name}")
-end
+start()

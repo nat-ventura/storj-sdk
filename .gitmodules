@@ -16,3 +16,6 @@
 [submodule "vendor/storj-lib"]
 	path = vendor/storj-lib
 	url = git@github.com:Storj/core.git
+[submodule "billing/billing"]
+	path = billing/billing
+	url = git@github.com:Storj/billing.git
