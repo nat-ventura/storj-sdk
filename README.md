@@ -1,12 +1,26 @@
-# storj-sdk
-The Storj Developer Kit
+Storj Developer Kit
+===================
 
-## SDK Script
-The sdk script in the root directory of this project is a work in progress and is not ready for use.
+The Storj Developer Kit is designed to enable both Team Members at Storj Labs and Community Members alike to quickly set up a fully working, complete and consistent environment with which to develop, test and experiment.
 
-## Setup / Quick Start
+## Setup
 
-### Check out the Repo
+### Dependencies
+
+#### Required
+
++ A VPN client (see below under Access Cluster)
++ jq ( `apt-get install jq` or `brew install jq` )
++ expect ( `apt-get install expect` or `brew install expect` )
+
+#### Optional
++ Ruby ( this is temporary ) - Required to use the ./sdk script
++ NodeJS v6.9.5 or Greater - Required to run the storj cli locally
+
+### SDK Script (./sdk)
+The `sdk` script wraps most of the functionality that you will need when using docker, docker-compose and vpn for these services.
+
+### 1) Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
 
 + `git clone https://github.com/Storj/storj-sdk.git --recursive`
@@ -15,7 +29,7 @@ To check out the repository, you'll need to add the `recursive` flag so that all
 
 + `git submodule update --init --recursive`
 
-### Bring up Cluster
+### 2) Bring up Cluster
 To bring up the cluster locally, we use docker-compose.
 
 + `docker-compose up`
@@ -23,32 +37,49 @@ To bring up the cluster locally, we use docker-compose.
 To bring up the cluster in the background
 + `docker-compose up -d`
 
-### Access Cluster
-To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client such as Tunnelblick.
+### 3) Access Cluster
+To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client.
+
++ [Tunnelblick](https://tunnelblick.net/downloads.html)
++ [Viscosity](https://www.sparklabs.com/viscosity/download/)
 
 After you have installed and started your VPN client, browse from the root directory of the repository to the vpn folder and run (or import) the VPN config that was generated after you brought the cluster up. It should be named `storj-local.ovpn`.
 
+#### Storj CLI
+To use the CLI, you'll need to set the `STORJ_BRIDGE` environment variable to the address of your local bridge.
+
+From the root of the sdk, run the following command:
+`. scripts/setbr`
+
+##### Behind the Scenes
+To use the local bridge you'll need to either export the `STORJ_BRIDGE` environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address.
+
+A script is provided to programatically determine the URL of your local bridge and can be found here:
+`./scripts/get_local_bridge.sh`.
+
+You can go ahead and export the bridge variable in one go like so:
+
+`eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
+This is what the `setbr` script from above does.
+
+#### Local SSL
+To access services locally over SSL, you will need to set hostnames for them in your local hosets file. The process has been scripted which can be run from the root of the storj-sdk as follows:
+
+`./scripts/set_host_entries.sh`
+
+Once the `set_host_entries.sh` script has been run, you will need to browse to `https://bridge-ssl-proxy` and accept the certificate warning. Once that has been accepted you can then browse to `https://bridge-gui-ssl-proxy` and log in with the test user information that was given to you when running `sdk -i` to init your cluster.
+
+##### Behind the Scenes
+To access the local bridge via ssl, you will need to have run the `set_host_entries.sh` script. You should then be able to use `https://bridge-ssl-proxy` in place of the address obtained by the `setbr` or `get_local_bridge.sh` scripts.
+
 #### Bridge
-To use the local bridge you'll need to either export the STORJ_BRIDGE environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address. A script is provided to programatically determine the URL of your local bridge and can be found here: `./scripts/get_local_bridge.sh`. You can go ahead and export the bridge variable in one go like so: `eval export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)`.
+[https://bridge-ssl-proxy](https://bridge-ssl-proxy)
 
 #### Bridge GUI
-Currently to access the bridge gui, you will need to determine the IP address of the bridge-gui-ssl-proxy and add it as a host entry in your /etc/hosts file. We are working on a way to automate this in the future.
+[https://bridge-gui-ssl-proxy](https://bridge-gui-ssl-proxy)
 
-The process has been scripted which can be run from the root of the storj-sdk as follows:
-
-`./scripts/set_bridge_gui_hosts_entry.sh`
-
-#### Steps
-
-+ Install an OpenVPN compatible VPN client
-
-+ Run or Import the OpenVPN config from `[root_of_sdk]/vpn/storj-local.ovpn`
-
-+ Init your cluster which adds a user, activates it and signs you in by typing `./sdk -i` from the root of the SDK
-
-+ Export the STORJ_BRIDGE environment variable as instructed after running the init
-
-+ Access the bridge as you would normally using your local Storj CLI (core-cli) keeping in mind that you will need to export the STORJ_BRIDGE environment variable in any terminal that you wish to use the local bridge from
+##### Non SSL
+[http://bridge](http://bridge)
 
 
 ## Try it Out
@@ -68,11 +99,60 @@ optionally you can add a service
 
 + `docker-compose logs -f bridge`
 
-## Developing & Contributing
+## Developing
+
+### Developing Against Local Node Module Dependencies
+
+You can use the `sdk` script to check and set versions (tag, sha, master, etc...) of the primary services and vendor services.
+
+Set the version of bridge to tag v5.6.0
+```
+./sdk -v bridge@v5.6.0
+```
+
+Set the version fo bridge to tag v5.6.0 and share to v2.5.0
+```
+./sdk -v bridge@v5.6.0,share@v2.5.0
+```
+
+Set the version of the storj-lib vendored dependency to v6.3.1
+* Note that for vendored dependencies, you must add the vendor/ prefix to the module name
+```
+./sdk -v vendor/storj-lib@v6.3.1
+```
+
+Set all to latest (coming soon)
+```
+./sdk -v latest
+```
+
+List current version or commit for all modules/services (coming soon)
+```
+./sdk -v
+```
+
+#### Behind the Scenes
+  To develop one of the Storj core apps against an unpublished local node_module, you add a git submodule to the `$SDK_ROOT/vendor` directory.
+  The app when started does the following...
+  + Runs a shell script that iterates through each of the directories in that folder
+  + rm -rf's that node module from the apps node_modules folder inside of the container
+  + copies the new module from the vendor folder into the node_modules directory
+  + Repeats this for each module in the vendors folder until done
+  + runs npm rebuild
+
+  This is currently only implemented for the following services
+  + Storj Share
+
+## Contributing
 If you would like to help make Storj better or would like to develop your application on top of the Storj platform, the Storj SDK aims to make this easy by tightening the feedback loop, removing as many requirements for getting started as possible, and allowing users to develop and test without accruing a balance while storing your test files.
 
 ### Pull Latest from Submodules
-Pull from tip of remote
+Update all modules
++ `./sdk -u [module]` - module defaults to all
+
+or
+
+Manually pull from tip of remote
 + `git submodule update --recursive --remote`
 
 Pull from latest commit (not what submodules points to)
@@ -102,6 +182,10 @@ If you only want to build and not bring up the cluster...
 
 
 ### Rebuilding Everything
++ `./sdk -b` (add -x for no-cache)
+
+or
+
 + `docker-compose down`
 + `docker-compose rm -f` ?
 + `docker-compose build`
@@ -109,6 +193,10 @@ If you only want to build and not bring up the cluster...
 + `docker-compose logs -f`
 
 ### Rebuild Specific Service (container)
++ `./sdk -b [service]` (add -x for no-cache)
+
+or
+
 + Make changes to dockerfile or source
 + `docker-compose up --build [project]` or
   `docker-compose up -d --no-deps [project]`
@@ -170,112 +258,53 @@ Service Containers
 
 ## Implementation
 
-## Tasks
-1) Get all services working each with one instance
-1.1) Clean up the repo, make sure nothing unwanted is getting comitted and push
-1.2) Confirm that the setup instructions work from a clean copy of master
-  + probably involve git pull --recurse-submodules
-  + for the first time you need to use --init
-  + git submodule update --init --recursive
-2) Get local file upload/download working
-3) Ensure that rebuilding specific containers is resiliant for each one (such that IP's etc... are updated on restart)
-4) Work on docker-compose scale for farmers
-  + Will need to dynamically and uniquely update the index for each new share instance
-  + Will also need to expose itself on a unique port (can docker compose do math with ports?)
-5) Cleanup
-  + Move ansilary services to a single folder in root
-6) Rename and update entry script to assist in the following
-  + Bringing the cluster up and down
-  + Rebuilding the entire cluster and restarting
-  + Run the preconfigured cli from within a docker container (link binary from host? Or launch a container?
-  + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
-  + Rebuilding a particular container and restarting that service
-  + Viewing logs for all or each service
-  + List addresses and ports of all services along with service type
-7) Convert mongodb container to sharded replicaset with authentication enabled
-  + This makes testing more like production
-8) Tests
-  + Test user creation
-  + Test user activation
-  + Test file upload
-  + Test file download
-9) Take Snapshots of Cluster State
-  + Get the state of the cluster the way that you want it
-  + Copy the mongodb data somewhere
-  + Copy the farmer keys and data somewhere, etc...
-9) Cleanup / Reset
-  + Reset the state of the DB
-  + Reset the state of the Farmer
+### Tasks
+- [x] 1) Get all services working each with one instance
+- [x] 1.1) Clean up the repo, make sure nothing unwanted is getting comitted and push
+- [x] 1.2) Confirm that the setup instructions work from a clean copy of master
+- [x]   + probably involve git pull --recurse-submodules
+- [x]   + for the first time you need to use --init
+- [x]   + git submodule update --init --recursive
+- [x] 2) Get local file upload/download working
+- [x] 3) Ensure that rebuilding specific containers is resiliant for each one (such that IP's etc... are updated on restart)
+- [x] 4) Work on docker-compose scale for farmers
+- [x]  + Add unique index for each farmer so scaling works
+- [ ] 5) Rename and update entry script to assist in the following
+- [x]   + Bringing the cluster up and down
+- [x]   + Rebuilding the entire cluster and restarting
+- [x]   + Run the preconfigured cli from within a docker container (link binary from host? Or launch a container?
+- [ ]  + Watch for changes and automatically (optionally) rebuild and restart anything that has changed
+- [x]  + Rebuilding a particular container and restarting that service
+- [x]  + Viewing logs for all or each service
+- [ ]  + List addresses and ports of all services along with service type
+- [ ]  + Echo all commands that the helper script is running to educate the user on what the script is doing
+- [ ]6) Convert mongodb container to sharded replicaset with authentication enabled
+- [ ]  + This makes testing more like production
+- [ ]7) Tests
+- [ ]  + Test user creation
+- [ ]  + Test user activation
+- [ ]  + Test file upload
+- [ ]  + Test file download
+- [ ]8) Take Snapshots of Cluster State
+- [ ]  + Get the state of the cluster the way that you want it
+- [ ]  + Copy the mongodb data somewhere
+- [ ]  + Copy the farmer keys and data somewhere, etc...
+- [x]9) Cleanup / Reset
+- [x]  + Reset the state of the DB
+- [x]  + Reset the state of the Farmer
 
-## Tech Debt / Cleanup
-  + It might be better to have the auto user creation and activation be done via JS and use the cli accounts.js actions (register, login, etc...)
+## Known Issues
 
+### Linux VPN Routes ALL traffic through VPN
+  There have been some cases where running the VPN config on Linux has routed all internet traffic through the local VPN which is not desired. This can be remedied by changing the configuration in your VPN client but we aim to push this setting out in the config provided.
 
-
-## Issues & Problems to Solve
-
-### Developing Against Local Node Module Dependencies
-  We could create a git submodule for each dependency at the top level, this would have to be where we execute the Dockerfile or docker-compose file from as docker cant copy from outside the cwd.
-
-  + We can set the npm prefix `npm config set prefix "/Users/me/github/storj-sdk/vendor/node_modules"` then use npm link which will link the module there.
-  + We can then hard link the module and use it in docker
-  + We will have to configure npm link in the docker container to hit the right place tho
-
-#### Current Solution
-  To develop one of the Storj core apps against an unpublished local node_module, you add a git submodule to the .../vendor directory.
-  The app when started does the following...
-  + Runs a shell script that iterates through each of the directories in that folder
-  + rm -rf's that node module from the apps node_modules folder inside of the container
-  + copies the new module from the vendor folder into the node_modules directory
-  + Repeats this for each module in the vendors folder until done
-  + runs npm rebuild
+### Corrupt .storjcli config file
+  When accessing environments locally that change in state frequenty but may use the same IP's, there is a chance that your local config files generated by the cli may get corrupted. This can be resolved by deleting the appropriate `~/.storjcli/id_ecdsa_(...` file but do this at your own risk as you need to make sure that you arent' removing any important keys for your real Storj account.
 
 ### Renter Whitelist
-  when renter comes up it should expose its renter ID to the farmers somehow so that when they come up they can be put on the whitelist for every farmer
-  or we sould find how to disable the requirement of the whitelist
-
-
-### Making Farmers Reachable from CLI
-#### Exposing Farmer to Host
-Need to expose farmers IP and port locally (and have it set correctly in its config) so that storj-cli can connect to it. Otherwise we have to run the CLI in a container so that it can reach the network that the farmers are on.
-
-##### VPN
-Can use a VPN to connect the two networks. This may require additional setup but could be scripted farily easily on osx in the background using openvpn.
-
- - https://github.com/wojas/docker-mac-network
-
-##### IP Aliasing
-  You can accomplish this with IP aliasing on the host.
-
-  First, add a virtual interface on the host that has a different IP address than the primary interface. We'll call the primary interface eth0 with IP 10.0.0.10, and the virtual interface eth0:1 with IP address 10.0.0.11.
-
-   ifconfig eth0:1 10.0.0.11 netmask 255.255.255.0 up
-   Now run the containers and map port 5000 to the corresponding interface. For example:
-
-   docker run -p 10.0.0.10:5000:5000 -name container1 <someimage> <somecommand>
-  docker run -p 10.0.0.11:5000:5000 -name container2 <someimage> <somecommand>
-  Now you can access each container on port 5000 using different IP addresses externally.
-  </somecommand></someimage>
-
-##### Four Ways
-  http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/
-  + NAT
-  + Linux Bridge Devices
-  + Open vSwitch Bridge devices
-  + macvlan devices
+  When renter comes up it should expose its renter ID to the farmers somehow so that when they come up they can be put on the whitelist for every farmer or we sould find how to disable the requirement of the whitelist
 
 #### Container host DNS resolution
+  We currently configure a few entries in your /etc/hosts file for the bridge and bridge-gui but it does not manage all hostnames. It likely could but needs have some thought put into it before we move forward.
+
   + Something like this? https://github.com/bnfinet/docker-dns
-
-#### Container ENV Setup/Config/Customization
-  + http://cavaliercoder.com/blog/update-etc-hosts-for-docker-machine.html
-
-#### Running the CLI in a Container
-This works but the user experience is not great.
-
-  Wrap running storj cli command in docker container from host
-  Replace bin/sleep with something better in cli container?
-
-  + Farmer should expose itself as it's dns name from within docker to avoid issues with IP's ? This may make it unreachable from outside the docker network however as hosts will be trying to resolve the hostname which will not work.
-
-
