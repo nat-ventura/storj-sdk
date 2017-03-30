@@ -2,10 +2,18 @@
 
 spawn storj login
 
-expect "email"
-send "$env(STORJ_BRIDGE_USERNAME)\n"
+expect {
+  "email" {
+    send "$env(STORJ_BRIDGE_USERNAME)\n"
+  }
+  "already paired" {
+    send_user "Already logged in"
+  }
+  "password" {
+    send "$env(STORJ_BRIDGE_PASSWORD)\n"
+  }
+  "successfully paired" {
+    send_user "success"
+  }
+}
 
-expect "password"
-send "$env(STORJ_BRIDGE_PASSWORD)\n"
-
-expect "successfully paired"

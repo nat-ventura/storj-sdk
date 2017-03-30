@@ -11,6 +11,7 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 + NodeJS v6.9.5 or Greater
 + Ruby ( this is temporary )
 + jq ( `apt-get install jq` or `brew install jq` )
++ expect ( `apt-get install expect` or `brew install expect` )
 
 ### Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
