@@ -19,6 +19,13 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 ### SDK Script (./sdk)
 The `sdk` script wraps most of the functionality that you will need when using docker, docker-compose and vpn for these services.
 
+#### Super Quick Start
++ `git clone https://github.com/Storj/storj-sdk.git --recursive`
++ `./sdk -i`
++ `. scripts/setbr`
+
+Done.
+
 ### 1) Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
 

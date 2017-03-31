@@ -1,1 +1,2 @@
 export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)
+echo "Local bridge set to $STORJ_BRIDGE"

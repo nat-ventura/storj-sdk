@@ -213,31 +213,42 @@ def start
     log_it("Initializing all service submodules...")
     output = `git submodule update --init --recursive`
     log_it("#{output}", :debug)
+
     log_it("Checking dependencies...")
     output = `./scripts/check_dependencies.sh`
-    log_it("#{output}", :debug)
+    log_it("#{output}")
+
+    log_it("Bringing up your cluster...")
+    output = `docker-compose up -d`
+
     log_it("Adding a test user to the bridge...")
     output = `./scripts/add_user.sh`
     log_it("#{output}", :debug)
+
     log_it("Logging in test user...")
     output = `./scripts/login_user.sh`
     log_it("#{output}", :debug)
+
     log_it("Setting host entries for bridge and bridge-gui. You may be asked for sudo password...")
     output = `./scripts/set_host_entries.sh`
     log_it("#{output}", :debug)
+
     log_it("Done.")
-    log_it("To bring up your cluster try ./sdk -c up")
+
+    log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
+    log_it("Please run '. scripts/setbr' to set your local bridge")
   end
 
   if options[:cluster]
     if options[:cluster] == 'up'
       log_it("Bringing up cluster...")
-      run_command('Bringing up cluster', 'docker-compose up -d')
-      log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
+      run_command('docker-compose up -d')
+      #log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
+      #log_it("Please run '. scripts/setbr' to set your local bridge")
     end
 
     if options[:cluster] == 'down'
-      run_command('Bringing down cluster', 'docker-compose down')
+      run_command('docker-compose down')
     end
   end
 

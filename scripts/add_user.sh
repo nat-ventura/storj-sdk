@@ -12,7 +12,8 @@ echo "net name: $NET_NAME"
 echo "Found Storj bridge at $STORJ_BRIDGE"
 
 # Make sure we can connect to the bridge before moving along
-curl $STORJ_BRIDGE > /dev/null 2>&1
+output=$(./scripts/wait_for_service.sh $STORJ_BRIDGE)
+
 if [ $? -ne 0 ]; then
   echo "Failed to connect to local bridge. Ensure that you have VPN set up and that it is connected."
   exit 1;
@@ -31,3 +32,5 @@ echo "Activating user $STORJ_BRIDGE_USERNAME"
 
 # You could use this to activate a user
 output=$(docker exec -it ${PROJECT_NAME}_db_1 /bin/bash -c "mongo localhost:27017/storj-sandbox --eval 'db.users.update({_id: \"$STORJ_BRIDGE_USERNAME\"}, {\$set:{\"activated\": true}});'")
+
+echo -e "User activated.\n"

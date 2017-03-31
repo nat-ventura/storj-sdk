@@ -1,6 +1,8 @@
 #!/usr/bin/expect -f
 
-spawn storj login
+set timeout 6
+
+spawn ./scripts/expect_wrapper.sh storj login
 
 expect {
   "email" {
@@ -9,6 +11,7 @@ expect {
   }
   "already paired" {
     send_user "Already logged in"
+    exit
   }
   "password" {
     send "$env(STORJ_BRIDGE_PASSWORD)\n"
@@ -17,5 +20,6 @@ expect {
   "successfully paired" {
     send_user "success"
   }
+  "done" { exit }
 }
 

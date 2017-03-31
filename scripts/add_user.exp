@@ -1,11 +1,22 @@
 #!/usr/bin/expect -f
 
-spawn storj register
+set timeout 6
 
-expect "email"
-send "$env(STORJ_BRIDGE_USERNAME)\n"
+spawn ./scripts/expect_wrapper.sh storj register
 
-expect "password"
-send "$env(STORJ_BRIDGE_PASSWORD)\n"
+expect {
+  "email" {
+    send "$env(STORJ_BRIDGE_USERNAME)\n"
+  }
 
-expect "Registered"
+  "password" {
+    send "$env(STORJ_BRIDGE_PASSWORD)\n"
+  }
+
+  "Registered" {
+    send_user "success"
+    exit
+  }
+
+  "done" { exit }
+}
