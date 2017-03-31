@@ -8,17 +8,23 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 ### Dependencies
 
 #### Required
-
-+ A VPN client (see below under Access Cluster)
 + jq ( `apt-get install jq` or `brew install jq` )
 + expect ( `apt-get install expect` or `brew install expect` )
 
 #### Optional
++ A VPN client (see below under Access Cluster) - Required for OSX and other systems that run the docker engine inside of a VM
 + Ruby ( this is temporary ) - Required to use the ./sdk script
 + NodeJS v6.9.5 or Greater - Required to run the storj cli locally
 
 ### SDK Script (./sdk)
 The `sdk` script wraps most of the functionality that you will need when using docker, docker-compose and vpn for these services.
+
+#### Super Quick Start
++ `git clone https://github.com/Storj/storj-sdk.git --recursive`
++ `./sdk -i`
++ `. scripts/setbr`
+
+Done.
 
 ### 1) Check out the Repo
 To check out the repository, you'll need to add the `recursive` flag so that all of the services contained within the SDK get populated.
@@ -37,8 +43,9 @@ To bring up the cluster locally, we use docker-compose.
 To bring up the cluster in the background
 + `docker-compose up -d`
 
-### 3) Access Cluster
+### 3) Access Cluster (OSX Only)
 To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client.
+If you want to use the VPN in Linux for any reason, you'll want to check the box telling your VPN client not to route all traffic through this VPN, only traffic destined for subnets that it controls.
 
 + [Tunnelblick](https://tunnelblick.net/downloads.html)
 + [Viscosity](https://www.sparklabs.com/viscosity/download/)
@@ -130,6 +137,19 @@ List current version or commit for all modules/services (coming soon)
 ```
 ./sdk -v
 ```
+
+#### Thoughts on Dependencies
+We're currently working through designing the way that managing the dependencies will work.
+
+We could provide two levels of dependencies.
+
+The first would be deps that Storj owns, the second could be deps that are completely external. We could provide un initialized got submodules for all of the Storj owned dependencies and the user would initiate commands to bring them in or deinit them when needed. These could be kept in line with the current stable service set in some automated way like git tags, etc...
+
+The question is how should we manage these dependencies (in the form of submodules if we go that route).
+
+For the modules not owned by Storj, we could provide the tools to obtain and manage them but any changes here would be in a .gitignore file such that those changes would not be comitted.
+
+The reason behind using submodules instead of pointing to a users local copy of a repository or dependency is due to a limitation on docker which requires us to have any sources that we want pulled into a container, in the root level of that containers context. In our case, we're building with docker-compose and the root of the SDK is the root for docker-compose. Links dont' work here...
 
 #### Behind the Scenes
   To develop one of the Storj core apps against an unpublished local node_module, you add a git submodule to the `$SDK_ROOT/vendor` directory.
@@ -308,3 +328,7 @@ Service Containers
   We currently configure a few entries in your /etc/hosts file for the bridge and bridge-gui but it does not manage all hostnames. It likely could but needs have some thought put into it before we move forward.
 
   + Something like this? https://github.com/bnfinet/docker-dns
+
+### VPN in Linux
+  + You must add a route `0.0.0.0` to the VPN config when importing it on some Linux systems
+  + You must configure the client to only route traffic destined for its network `Use this connection only for resources on its network`

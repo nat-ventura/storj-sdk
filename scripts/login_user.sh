@@ -1,6 +1,6 @@
 #!/bin/bash
+# Check output here to make sure the user was activated or at least already activated
 
-# Get the local bridge URL
 export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)
 
 BASE_DIR=$(pwd)
@@ -21,18 +21,6 @@ fi
 # Changing these do nothing currently
 export STORJ_BRIDGE_USERNAME='test@storj.io'
 export STORJ_BRIDGE_PASSWORD='password'
-
-./scripts/add_user.exp
-
-# Need to check to make sure user was actually added
-
-echo -e "\n\n"
-echo "Activating user $STORJ_BRIDGE_USERNAME"
-
-# You could use this to activate a user
-output=$(docker exec -it ${PROJECT_NAME}_db_1 /bin/bash -c "mongo localhost:27017/storj-sandbox --eval 'db.users.update({_id: \"$STORJ_BRIDGE_USERNAME\"}, {\$set:{\"activated\": true}});'")
-
-# Check output here to make sure the user was activated or at least already activated
 
 echo -e "User activated.\n"
 echo -e "Logging in..."
