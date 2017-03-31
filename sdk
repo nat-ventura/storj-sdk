@@ -147,11 +147,20 @@ def get_nodejs_project_version()
   return package_version
 end
 
+def check_deps()
+  # Check for..
+  # jq
+  # expect
+end
+
 def start
   options = get_options
 
   $yes_to_all = options[:yes]
   $debug = options[:debug]
+
+  # Check dependencies here
+  check_deps()
 
   if options[:setup]
     # Determine the OS we're working with
