@@ -210,10 +210,20 @@ def start
   end
 
   if options[:init]
+    log_it("Checking dependencies...")
     output = `./scripts/check_dependencies.sh`
-    puts output
-    output = `./scripts/auto_add_user.sh`
-    puts output
+    log_it("#{output}", :debug)
+    log_it("Adding a test user to the bridge...")
+    output = `./scripts/add_user.sh`
+    log_it("#{output}", :debug)
+    log_it("Logging in test user...")
+    output = `./scripts/login_user.sh`
+    log_it("#{output}", :debug)
+    log_it("Setting host entries for bridge and bridge-gui. You may be asked for sudo password...")
+    output = `./scripts/set_host_entries.sh`
+    log_it("#{output}", :debug)
+    log_it("Done.")
+    log_it("To bring up your cluster try ./sdk -c up")
   end
 
   if options[:cluster]
