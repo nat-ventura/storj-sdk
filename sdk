@@ -210,6 +210,9 @@ def start
   end
 
   if options[:init]
+    log_it("Initializing all service submodules...")
+    output = `git submodule update --init --recursive`
+    log_it("#{output}", :debug)
     log_it("Checking dependencies...")
     output = `./scripts/check_dependencies.sh`
     log_it("#{output}", :debug)
@@ -228,7 +231,9 @@ def start
 
   if options[:cluster]
     if options[:cluster] == 'up'
+      log_it("Bringing up cluster...")
       run_command('Bringing up cluster', 'docker-compose up -d')
+      log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
     end
 
     if options[:cluster] == 'down'
