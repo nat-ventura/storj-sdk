@@ -90,9 +90,9 @@ services:
     ports:
       - "443"
     volumes:
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/cert.pem:/etc/secrets/tls.crt
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/key.pem:/etc/secrets/tls.key
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
   bridge-ssl-proxy:
     image: storjlabs/nginx-ssl-proxy:latest
     environment:
@@ -101,6 +101,6 @@ services:
     ports:
       - "443"
     volumes:
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/cert.pem:/etc/secrets/tls.crt
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/key.pem:/etc/secrets/tls.key
-      - ./bridge-gui/dockerfiles/scripts/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
