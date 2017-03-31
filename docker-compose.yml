@@ -69,7 +69,7 @@ services:
       DOCKER_NETWORK: storjsdk_default
     command: ["/local/helpers/run.sh"]
   bridge-gui:
-    build: ./bridge-gui
+    build: ./bridge-gui/bridge-gui
     ports:
       - "8080"
     environment:
