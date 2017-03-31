@@ -1,15 +1,28 @@
 [submodule "complex"]
 	path = complex/complex
 	url = https://github.com/storj/complex
+  pushurl = git@github.com/Storj/complex.git
 [submodule "share"]
 	path = share/storjshare-daemon
 	url = https://github.com/storj/storjshare-daemon
+  pushurl = git@github.com/Storj/storjshare-daemon.git
 [submodule "cli"]
 	path = cli/core-cli
 	url = https://github.com/storj/core-cli
+  pushurl = git@github.com/Storj/core-cli.git
 [submodule "vendor/storj-lib"]
 	path = vendor/storj-lib
 	url = https://github.com/storj/core
+  pushurl = git@github.com/Storj/core.git
+[submodule "bridge/bridge"]
+	path = bridge/bridge
+	url = https://github.com/storj/bridge
+  pushurl = git@github.com/Storj/bridge.git
+[submodule "bridge-gui/bridge-gui"]
+	path = bridge-gui/bridge-gui
+	url = https://github.com/storj/bridge-gui
+  pushurl = git@github.com/Storj/bridge-gui.git
 [submodule "billing/billing"]
 	path = billing/billing
 	url = https://github.com/storj/billing
+  pushurl = git@github.com/Storj/billing.git
