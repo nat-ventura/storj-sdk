@@ -6,6 +6,9 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
  && chmod +x /usr/local/bin/dumb-init
 
 # wait.sh forces our app to wait for other containers to come up before starting
+RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
+
+# wait.sh forces our app to wait for other containers to come up before starting
 # Should pull this into the repo to cache it or use the included wait scritp that comes with newer docker
 # We shouldn't have to do this at all however. Our services should wait for other services until they are alive.
 RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
@@ -23,8 +26,12 @@ RUN npm install
 # Finally add in all of our source files
 ADD bridge/ ./
 
+# Add setup script which takes care of vendored modules
+ADD ./setup.sh /bin/setup.sh
+
 # Pass everything through dumb-init and wait.sh first, making sure our process handles the responsibilities of PID 1 and waits for services it depends on to start before coming up.
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh"]
+ENTRYPOINT ["dumb-init", "--"]
 
 # The default command this container will run is the bridge, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
-CMD ["./bin/storj-bridge.js"]
+#CMD ["./bin/storj-bridge.js"]
+CMD ["/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "./bin/storj-bridge.js -c /bridge/config.json"]

@@ -16,7 +16,7 @@ services:
     build: ./bridge
     volumes:
       - ./bridge/config.json:/bridge/config.json
-    command: ["./bin/storj-bridge.js", "-c", "/bridge/config.json"]
+      - ./vendor:/usr/src/vendor
     environment:
       - DOCKER_SERVICES=db:27017
     ports:
