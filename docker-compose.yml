@@ -21,6 +21,13 @@ services:
       - DOCKER_SERVICES=db:27017
     ports:
       - "8080"
+  redis:
+    image: redis
+    ports:
+      - "6379"
+    environment:
+      - REDIS_PASS=abc123
+    command: ["/bin/sh", "-c", "redis-server --requirepass \"$${REDIS_PASS}\""]
   landlord:
     build: ./complex
     volumes:

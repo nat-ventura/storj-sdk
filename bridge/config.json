@@ -35,5 +35,10 @@
       "pass": "pass"
     },
     "from": "user@domain"
+  },
+  "redis": {
+    "host": "redis",
+    "port": "6379",
+    "password": "abc123"
   }
 }
