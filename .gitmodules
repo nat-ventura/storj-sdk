@@ -26,3 +26,6 @@
 	path = billing/billing
 	url = https://github.com/storj/billing
   pushurl = git@github.com:Storj/billing.git
+[submodule "vendor/storj-service-middleware"]
+	path = vendor/storj-service-middleware
+	url = https://github.com/storj/service-middleware
