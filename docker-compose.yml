@@ -30,6 +30,13 @@ services:
       - MONGO_URL=mongodb://db:27017/storj-sandbox
     ports:
       - "3000"
+  billing-importer:
+    build:
+      context: ./billing/billing
+      dockerfile: ./dockerfiles/billing-importer.dockerfile
+    environment:
+        - DOCKER_SERVICES=db:27017
+        - MONGO_URL=mongodb://db:27017/storj-sandbox
   redis:
     image: redis
     ports:
