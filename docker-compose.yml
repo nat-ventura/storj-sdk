@@ -21,6 +21,15 @@ services:
       - DOCKER_SERVICES=db:27017
     ports:
       - "8080"
+  billing:
+    build:
+      context: ./billing/billing
+      dockerfile: ./dockerfiles/billing-development.dockerfile
+    environment:
+      - DOCKER_SERVICES=db:27017
+      - MONGO_URL=mongodb://db:27017/storj-sandbox
+    ports:
+      - "3000"
   landlord:
     build: ./complex
     volumes:
@@ -78,7 +87,7 @@ services:
       - APIPROTOCOL_VAL=https
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
-      - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
+      - APOLLO_CLIENT_URL_VAL=https://billing-ssl-proxy
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
       - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui-ssl-proxy
     command: ["./dockerfiles/scripts/start-bridge-gui"]
@@ -98,6 +107,17 @@ services:
     environment:
       - ENABLE_SSL=true
       - TARGET_SERVICE=bridge:8080
+    ports:
+      - "443"
+    volumes:
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+  billing-ssl-proxy:
+    image: storjlabs/nginx-ssl-proxy:latest
+    environment:
+      - ENABLE_SSL=true
+      - TARGET_SERVICE=billing:3000
     ports:
       - "443"
     volumes:
