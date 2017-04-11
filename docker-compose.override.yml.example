@@ -1,0 +1,14 @@
+billing:
+  environment:
+    MONGO_URL: "mongodb://my_awesome_db:27017/bridge?replicaSet=blamo&checkServerIdentity=false&sslValidate=false"
+    MONGO_USERNAME: "storj"
+    MONGO_PASSWORD: "jk3fjk3jfkjk3fjkj3f"
+    MONGO_SSL: "true"
+    REPLSET: "{\"ssl\": true, \"checkServerIdentity\": false, \"sslValidate\": false, \"rs_name\": \"blamo\"}"
+billing-importer:
+  environment:
+    MONGO_URL: "mongodb://my_awesome_db:27017/bridge?replicaSet=blamo&checkServerIdentity=false&sslValidate=false"
+    MONGO_USERNAME: "storj"
+    MONGO_PASSWORD: "jk3fjk3jfkjk3fjkj3f"
+    MONGO_SSL: "true"
+    REPLSET: "{\"ssl\": true, \"checkServerIdentity\": false, \"sslValidate\": false, \"rs_name\": \"blamo\"}"

@@ -26,8 +26,8 @@ services:
       context: ./billing/billing
       dockerfile: ./dockerfiles/billing-development.dockerfile
     environment:
-      - DOCKER_SERVICES=db:27017
-      - MONGO_URL=mongodb://db:27017/storj-sandbox
+      DOCKER_SERVICES: "db:27017"
+      MONGO_URL: "mongodb://db:27017/storj-sandbox"
     ports:
       - "3000"
   billing-importer:
@@ -35,8 +35,8 @@ services:
       context: ./billing/billing
       dockerfile: ./dockerfiles/billing-importer.dockerfile
     environment:
-        - DOCKER_SERVICES=db:27017,billing:3000
-        - MONGO_URL=mongodb://db:27017/storj-sandbox
+      DOCKER_SERVICES: "db:27017,billing:3000"
+      MONGO_URL: "mongodb://db:27017/storj-sandbox"
   redis:
     image: redis
     ports:
