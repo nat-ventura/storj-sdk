@@ -59,7 +59,7 @@ services:
     command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
     environment:
       - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
-    restart: always
+    restart: on-failure
     ports:
       - "4000"
   share:
