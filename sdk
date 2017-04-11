@@ -225,16 +225,22 @@ def start
     log_it("Bringing up your cluster...")
     output = `docker-compose up -d`
 
+    rsp_code = ""
+
     log_it("Checking for connectivity to local bridge server... Please wait.")
     # Get the local bridge and attempt to ping it
-    rsp_code = `curl -m 5 -s -o /dev/null -w "%{http_code}" $(./scripts/get_local_bridge.sh)`
-    # If we cannot ping it, we're likely not connected to the VPN so prompt the user to do so here
-    if rsp_code != "200"
-      log_it("We are unable to connect to the local bridge service. Please ensure that your VPN connection has been configured", :warn)
-      log_it("Please refer to the readme for help with importing the VPN configuration for the first time")
-      continue = yesno("Once you have connected to VPN please continue")
-      if !continue
-        exit 0
+    while rsp_code != "200"
+      rsp_code = `curl -m 5 -s -o /dev/null -w "%{http_code}" $(./scripts/get_local_bridge.sh)`
+      # If we cannot ping it, we're likely not connected to the VPN so prompt the user to do so here
+      if rsp_code != "200"
+        log_it("We are unable to connect to the local bridge service. Please ensure that your VPN connection has been configured", :warn)
+        log_it("Please refer to the readme for help with importing the VPN configuration for the first time")
+        continue = yesno("Once you have connected to VPN please continue")
+        if !continue
+          exit 0
+        end
+
+        log_it("Trying again...")
       end
     end
 
