@@ -21,6 +21,10 @@ $log_levels = {
     'string' => 'info',
     'color' => :green
   },
+  :warn => {
+    'string' => 'warn',
+    'color' => :magenta
+  },
   :debug => {
     'string' => 'debug',
     'color' => :yellow
@@ -221,6 +225,27 @@ def start
     log_it("Bringing up your cluster...")
     output = `docker-compose up -d`
 
+    rsp_code = ""
+
+    log_it("Checking for connectivity to local bridge server... Please wait.")
+    # Get the local bridge and attempt to ping it
+    while rsp_code != "200"
+      rsp_code = `curl -m 5 -s -o /dev/null -w "%{http_code}" $(./scripts/get_local_bridge.sh)`
+      # If we cannot ping it, we're likely not connected to the VPN so prompt the user to do so here
+      if rsp_code != "200"
+        log_it("We are unable to connect to the local bridge service. Please ensure that your VPN connection has been configured", :warn)
+        log_it("Please refer to the readme for help with importing the VPN configuration for the first time")
+        continue = yesno("Once you have connected to VPN please continue")
+        if !continue
+          exit 0
+        end
+
+        log_it("Trying again...")
+      end
+    end
+
+    log_it("Connected to local bridge successfully!")
+
     log_it("Adding a test user to the bridge...")
     output = `./scripts/add_user.sh`
     log_it("#{output}", :debug)
@@ -236,7 +261,7 @@ def start
     log_it("Done.")
 
     log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
-    log_it("Please run '. scripts/setbr' to set your local bridge")
+    log_it("Please run 'source scripts/setbr' to set your local bridge")
   end
 
   if options[:cluster]
