@@ -13,9 +13,11 @@ RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/maste
 # We shouldn't have to do this at all however. Our services should wait for other services until they are alive.
 RUN wget -O /bin/wait.sh https://raw.githubusercontent.com/Storj/storj-sdk/master/scripts/wait.sh
 
+RUN mkdir /storj && mkdir /storj/bridge
+
 # We will run our application from /usr/src/app to be a good linux citizen
 # Possibly should use /opt/storj or /storj/bridge
-WORKDIR /usr/src/app
+WORKDIR /storj/bridge
 
 # Cache node_modules
 ADD bridge/package.json .
