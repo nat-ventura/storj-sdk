@@ -235,6 +235,7 @@ def start
       # If we cannot ping it, we're likely not connected to the VPN so prompt the user to do so here
       if rsp_code != "200"
         log_it("We are unable to connect to the local bridge service. Please ensure that your VPN connection has been configured", :warn)
+        log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
         log_it("Please refer to the readme for help with importing the VPN configuration for the first time")
         continue = yesno("Once you have connected to VPN please continue")
         if !continue
@@ -265,7 +266,6 @@ def start
 
     log_it("Done.")
 
-    log_it("If you're on OSX, be sure to import the ./vpn/storj-local.ovpn config and connect to the VPN")
     log_it("Please run 'source scripts/setbr' to set your local bridge")
   end
 
