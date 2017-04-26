@@ -25,6 +25,8 @@ services:
     build:
       context: ./billing/billing
       dockerfile: ./dockerfiles/billing-development.dockerfile
+    volumes:
+      - ./vendor:/usr/src/vendor
     environment:
       DOCKER_SERVICES: "db:27017"
       MONGO_URL: "mongodb://db:27017/storj-sandbox"
@@ -35,6 +37,8 @@ services:
     build:
       context: ./billing/billing
       dockerfile: ./dockerfiles/billing-importer.dockerfile
+    volumes:
+      - ./vendor:/usr/src/vendor
     environment:
       DOCKER_SERVICES: "db:27017,billing:3000"
       MONGO_URL: "mongodb://db:27017/storj-sandbox"
@@ -102,7 +106,7 @@ services:
       - APIPORT_VAL=443
       - APIPROTOCOL_VAL=https
       - NODE_ENV_VAL=production
-      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_9jNycwEK9kRyCEbKpbMJI1rO
       - APOLLO_CLIENT_URL_VAL=https://billing-ssl-proxy
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
       - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui-ssl-proxy
