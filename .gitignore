@@ -1,4 +1,4 @@
 .DS_Store
 *.swp
 .idea/*
-docker-compose.override.yml
+docker-compose.override.yml*

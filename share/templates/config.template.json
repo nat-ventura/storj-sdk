@@ -35,6 +35,6 @@
   "loggerVerbosity": 4,
   "loggerOutputFile": "/var/log/storj.farmer.log",
   "storagePath": "{{ STORAGE_PATH }}",
-  "storageAllocation": "3GB",
+  "storageAllocation": "5GB",
   "enableTelemetryReporting": false
 }
