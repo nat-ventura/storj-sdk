@@ -215,6 +215,7 @@ def start
 
   if options[:init]
     log_it("Initializing all service submodules...")
+    # We shoudl probably make sure to not init vendor modules here
     output = `git submodule update --init --recursive`
     log_it("#{output}", :debug)
 
@@ -248,6 +249,10 @@ def start
 
     log_it("Adding a test user to the bridge...")
     output = `./scripts/add_user.sh`
+    log_it("#{output}", :debug)
+
+    log_it("Adding a billing user to the bridge...")
+    output = `./scripts/add_billing_user.sh`
     log_it("#{output}", :debug)
 
     log_it("Logging in test user...")
