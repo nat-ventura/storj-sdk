@@ -138,6 +138,31 @@ List current version or commit for all modules/services (coming soon)
 ./sdk -v
 ```
 
+#### Manual management of Vendor Modules
+Submodules are managed and retained by the `.gitmodules` file in the root of the SDK. Vendor modules ( i.e. `vendor/storj-lib` ) can exist here but not be checked out or used. If desired, you can pull in one of the predefined submodules or add additional modules. The following are the steps to manage this process manually.
+
+Pull a submodule that exists in `.gitmodules` already
+(first check the .gitmodules file to ensure that the module you are going to pull in exists)
+```
+git submodule update --init vendor/storj-lib
+```
+
+Add a submodule that has not been added to the `.gitmodules` file yet
+```
+git submodule add --name storj-lib https://github.com/storj/core vendor/storj-lib
+cd vendor/storj-lib
+git config remote.origin.pushurl git://github.com/storj/core
+```
+This will add the module such that anyone can pull from git but at the same time, anyone with push permissions will be able to do so.
+
+Remove a submodule but leave it in `.gitmodules` so that you can pull it back in later
+(first ensure that there are no uncomitted changes to the repository)
+```
+git submodule deinit vendor/storj-lib
+rm -rf vendor/storj-lib
+```
+
+
 #### Thoughts on Dependencies
 We're currently working through designing the way that managing the dependencies will work.
 

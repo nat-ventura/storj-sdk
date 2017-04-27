@@ -16,11 +16,41 @@ services:
     build: ./bridge
     volumes:
       - ./bridge/config.json:/bridge/config.json
-    command: ["./bin/storj-bridge.js", "-c", "/bridge/config.json"]
+      - ./vendor:/usr/src/vendor
     environment:
       - DOCKER_SERVICES=db:27017
     ports:
       - "8080"
+  billing:
+    build:
+      context: ./billing/billing
+      dockerfile: ./dockerfiles/billing-development.dockerfile
+    volumes:
+      - ./vendor:/usr/src/vendor
+    environment:
+      DOCKER_SERVICES: "db:27017"
+      MONGO_URL: "mongodb://db:27017/storj-sandbox"
+      LOG_LEVEL: "4"
+    ports:
+      - "3000"
+  billing-importer:
+    build:
+      context: ./billing/billing
+      dockerfile: ./dockerfiles/billing-importer.dockerfile
+    volumes:
+      - ./vendor:/usr/src/vendor
+    environment:
+      DOCKER_SERVICES: "db:27017,billing:3000"
+      MONGO_URL: "mongodb://db:27017/storj-sandbox"
+      BILLING_URL: "http://billing:3000"
+      LOG_LEVEL: "4"
+  redis:
+    image: redis
+    ports:
+      - "6379"
+    environment:
+      - REDIS_PASS=abc123
+    command: ["/bin/sh", "-c", "redis-server --requirepass \"$${REDIS_PASS}\""]
   landlord:
     build: ./complex
     volumes:
@@ -36,7 +66,7 @@ services:
     command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
     environment:
       - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
-    restart: always
+    restart: on-failure
     ports:
       - "4000"
   share:
@@ -77,8 +107,8 @@ services:
       - APIPORT_VAL=443
       - APIPROTOCOL_VAL=https
       - NODE_ENV_VAL=production
-      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
-      - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_9jNycwEK9kRyCEbKpbMJI1rO
+      - APOLLO_CLIENT_URL_VAL=https://billing-ssl-proxy
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
       - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui-ssl-proxy
     command: ["./dockerfiles/scripts/start-bridge-gui"]
@@ -117,3 +147,14 @@ services:
       - BRIDGE_URL_VAL=https://bridge-gui-ssl-proxy
     ports:
       - "3001:80"
+  billing-ssl-proxy:
+    image: storjlabs/nginx-ssl-proxy:latest
+    environment:
+      - ENABLE_SSL=true
+      - TARGET_SERVICE=billing:3000
+    ports:
+      - "443"
+    volumes:
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam

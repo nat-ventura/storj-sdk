@@ -29,3 +29,6 @@
 [submodule "bridge-gui-vue"]
 	path = bridge-gui-vue
 	url = https://github.com/Storj/bridge-gui-vue.git
+[submodule "vendor/storj-service-middleware"]
+	path = vendor/storj-service-middleware
+	url = https://github.com/storj/service-middleware

@@ -23,8 +23,12 @@ RUN npm install
 # Finally add in all of our source files
 ADD bridge/ ./
 
+# Add setup script which takes care of vendored modules
+ADD ./setup.sh /bin/setup.sh
+
 # Pass everything through dumb-init and wait.sh first, making sure our process handles the responsibilities of PID 1 and waits for services it depends on to start before coming up.
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/bin/wait.sh"]
+ENTRYPOINT ["dumb-init", "--"]
 
 # The default command this container will run is the bridge, but the user can pass in their own commands which get handled by wait.sh and dumb-init.
-CMD ["./bin/storj-bridge.js"]
+#CMD ["./bin/storj-bridge.js"]
+CMD ["/bin/bash", "/bin/wait.sh", "/bin/setup.sh", "./bin/storj-bridge.js -c /bridge/config.json"]

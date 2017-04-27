@@ -1,0 +1,18 @@
+version: "2"
+services:
+  billing:
+    environment:
+      MONGO_URL: "mongodb://my_awesome_db:27017/bridge?replicaSet=blamo&checkServerIdentity=false&sslValidate=false"
+      MONGO_USERNAME: "storj"
+      MONGO_PASSWORD: "jk3fjk3jfkjk3fjkj3f"
+      MONGO_SSL: "true"
+      REPLSET: "{\"ssl\": true, \"checkServerIdentity\": false, \"sslValidate\": false, \"rs_name\": \"blamo\"}"
+      STRIPE_KEY: "123123123123123123123"
+      STRIPE_TEST_KEY: "123123123123123123123"
+  billing-importer:
+    environment:
+      MONGO_URL: "mongodb://my_awesome_db:27017/bridge?replicaSet=blamo&checkServerIdentity=false&sslValidate=false"
+      MONGO_USERNAME: "storj"
+      MONGO_PASSWORD: "jk3fjk3jfkjk3fjkj3f"
+      MONGO_SSL: "true"
+      REPLSET: "{\"ssl\": true, \"checkServerIdentity\": false, \"sslValidate\": false, \"rs_name\": \"blamo\"}"
