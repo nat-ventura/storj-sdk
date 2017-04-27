@@ -155,5 +155,6 @@ services:
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
       - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
+      - BRIDGE_URL_VAL=https://bridge-gui-ssl-proxy
     ports:
       - "3001:80"
