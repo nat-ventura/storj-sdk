@@ -31,4 +31,4 @@
 	url = https://github.com/storj/service-middleware
 [submodule "bridge-gui/bridge-gui-vue"]
 	path = bridge-gui/bridge-gui-vue
-	url = https://github.com/storj/bridge-gui-vue
+	url = https://github.com/storj/bridge-gui-vue.git
