@@ -164,12 +164,6 @@ services:
     environment:
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
-<<<<<<< HEAD
-      - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
-      - BRIDGE_URL_VAL=https://bridge-gui-ssl-proxy
-    ports:
-      - "3001:80"
-=======
       - BILLING_URL_VAL=https://billing-ssl-proxy
     volumes:
       - ./bridge-gui/files/certs.dev/cert.pem:/etc/nginx/ssl/server.crt
@@ -185,4 +179,3 @@ services:
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
->>>>>>> Making changes to add bridge-gui-vue to the SDK
