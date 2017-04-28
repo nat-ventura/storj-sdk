@@ -137,16 +137,26 @@ services:
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - "6379"
+  bridge-gui-vue-build:
+    build: ./bridge-gui/bridge-gui-vue
+    volumes:
+      - ./bridge-gui/bridge-gui-vue/dist:/opt/bridge-gui-vue/dist
   bridge-gui-vue:
-    image: bridge-gui-vue
+    build:
+      context: ./bridge-gui
+      dockerfile: ./bridge-gui-vue.dockerfile
+    depends_on:
+      - "bridge-gui-vue-build"
+    ports:
+      - "443"
     environment:
       - NODE_ENV_VAL=production
       - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
-      - APOLLO_CLIENT_URL_VAL=https://bridge-gui-ssl-proxy:3000/graphql
-      - BRIDGE_URL_VAL=https://bridge-gui-ssl-proxy
-    ports:
-      - "3001:80"
+      - BILLING_URL_VAL=https://billing-ssl-proxy
+    volumes:
+      - ./bridge-gui/files/certs.dev/cert.pem:/etc/nginx/ssl/server.crt
+      - ./bridge-gui/files/certs.dev/key.pem:/etc/nginx/ssl/server.key
   billing-ssl-proxy:
     image: storjlabs/nginx-ssl-proxy:latest
     environment:
