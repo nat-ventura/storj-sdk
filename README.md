@@ -281,11 +281,27 @@ Use storj cli as usual
 
 ## Spec
 
-### Interface (build.rb)
-Notes
------
-+ Name of build.rb should be changed to something like sdk
-+ Should use NPM to link the interface file as a binary so you can type [interface_file_name] action
+### Directory Structure
+| Description                | SDK / Project                                                             | Container                               | Notes                 |
+| -------------------------- | ------------------------------------------------------------------------- | --------------------------------------- | --------------------- |
+| App Directory in Container |                                                                           | `/opt/[app_name]`                       |                       |
+| Config(s)                  |                                                                           | `/etc/storj/[app_name].conf`            |                       |
+| Convenience Directories    |                                                                           | `/opt/[app_name]` -> `/opt/app`         |                       |
+| Vendor Modules             |                                                                           | `/opt/vendor/[module_name]`             |                       |
+| Dockerfiles                | `[sdk_root]/[app_name]/[repo_name]/dockerfiles/[service_name].dockerfile` |                                         |                       |
+| Helper Scripts             | `[sdk_root]/[app_name]/scripts`                                           | `/usr/local/bin`                        |                       |
+
+#### Dockerfiles
+If at all possible, we should only create one Dockerfile per project or service. Using a different Dockerfile between development and production should be avoided as this will create differences in the build that is used to test and the one that will be shipped to production.
+
+### Startup Scripts
+In order to include vendored modules, a wrapper startup script needs to be used. The Dockerfile in the project should contain the CMD to start the service. The docker-compose configuration file should override this to employ the wait script as well as execute the script to copy vendored modules.
+
+### Template Parsing
+Templates are parsed by a bash script that recursively replaces instances of environment variable name with that environment variable names contents. This allows for being able to inject variables at build time or (with the seame variables/system) find and replace them at container start time. Using these variables at container start time is required for being able to inject secrets via env variable.
+
+### Build & Test
+Adding a Jenkins file to the root level of the projects repository will allow for creation of a pipeline in the Storj automated build system.
 
 ### Dockerfiles
 

@@ -134,6 +134,63 @@ services:
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
       - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+  redis:
+    image: redis
+    ports:
+      - "6379"
+  bridge-gui-vue-build:
+    build: ./bridge-gui/bridge-gui-vue
+    volumes:
+      - ./bridge-gui/bridge-gui-vue/dist:/opt/bridge-gui-vue/dist
+  bridge-gui-vue:
+    build:
+      context: ./bridge-gui
+      dockerfile: ./bridge-gui-vue.dockerfile
+    depends_on:
+      - "bridge-gui-vue-build"
+    ports:
+      - "443"
+    environment:
+      - NODE_ENV_VAL=production
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
+      - BILLING_URL_VAL=https://billing-ssl-proxy
+    volumes:
+      - ./bridge-gui/files/certs.dev/cert.pem:/etc/nginx/ssl/server.crt
+      - ./bridge-gui/files/certs.dev/key.pem:/etc/nginx/ssl/server.key
+  billing-ssl-proxy:
+    image: storjlabs/nginx-ssl-proxy:latest
+    environment:
+      - ENABLE_SSL=true
+      - TARGET_SERVICE=billing:3000
+    ports:
+      - "443"
+    volumes:
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/cert.pem:/etc/secrets/tls.crt
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/key.pem:/etc/secrets/tls.key
+      - ./bridge-gui/bridge-gui/dockerfiles/files/certs.dev/dhparams.pem:/etc/secrets/tls.dhparam
+  redis:
+    image: redis
+    ports:
+      - "6379"
+  bridge-gui-vue-build:
+    build: ./bridge-gui/bridge-gui-vue
+    volumes:
+      - ./bridge-gui/bridge-gui-vue/dist:/opt/bridge-gui-vue/dist
+  bridge-gui-vue:
+    build:
+      context: ./bridge-gui
+      dockerfile: ./bridge-gui-vue.dockerfile
+    depends_on:
+      - "bridge-gui-vue-build"
+    ports:
+      - "443"
+    environment:
+      - NODE_ENV_VAL=production
+      - STRIPE_PUBLISHABLE_KEY_VAL=pk_test_3jNyjwE39k9y2EbKpIM0Ilz1
+      - BILLING_URL_VAL=https://billing-ssl-proxy
+    volumes:
+      - ./bridge-gui/files/certs.dev/cert.pem:/etc/nginx/ssl/server.crt
+      - ./bridge-gui/files/certs.dev/key.pem:/etc/nginx/ssl/server.key
   billing-ssl-proxy:
     image: storjlabs/nginx-ssl-proxy:latest
     environment:

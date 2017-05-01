@@ -216,7 +216,17 @@ def start
   if options[:init]
     log_it("Initializing all service submodules...")
     # We shoudl probably make sure to not init vendor modules here
-    output = `git submodule update --init --recursive`
+    output = `git submodule update --init -- bridge/bridge`
+    log_it("#{output}", :debug)
+    output = `git submodule update --init -- billing/billing`
+    log_it("#{output}", :debug)
+    output = `git submodule update --init -- bridge-gui/bridge-gui`
+    log_it("#{output}", :debug)
+    output = `git submodule update --init -- bridge-gui/bridge-gui-vue`
+    log_it("#{output}", :debug)
+    output = `git submodule update --init -- share/storjshare-daemon`
+    log_it("#{output}", :debug)
+    output = `git submodule update --init -- complex/complex`
     log_it("#{output}", :debug)
 
     log_it("Checking dependencies...")
@@ -249,7 +259,7 @@ def start
     log_it("Connected to local bridge successfully!")
 
     log_it("Adding a test user to the bridge...")
-    output = `./scripts/add_user.sh`
+    output = `./scripts/add_test_user.sh`
     log_it("#{output}", :debug)
 
     log_it("Adding a billing user to the bridge...")
