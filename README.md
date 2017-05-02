@@ -339,18 +339,18 @@ Service Containers
 - [x]  + Viewing logs for all or each service
 - [ ]  + List addresses and ports of all services along with service type
 - [ ]  + Echo all commands that the helper script is running to educate the user on what the script is doing
-- [ ]6) Convert mongodb container to sharded replicaset with authentication enabled
+- [ ] 6) Convert mongodb container to sharded replicaset with authentication enabled
 - [ ]  + This makes testing more like production
-- [ ]7) Tests
+- [ ] 7) Tests
 - [ ]  + Test user creation
 - [ ]  + Test user activation
 - [ ]  + Test file upload
 - [ ]  + Test file download
-- [ ]8) Take Snapshots of Cluster State
+- [ ] 8) Take Snapshots of Cluster State
 - [ ]  + Get the state of the cluster the way that you want it
 - [ ]  + Copy the mongodb data somewhere
 - [ ]  + Copy the farmer keys and data somewhere, etc...
-- [x]9) Cleanup / Reset
+- [x] 9) Cleanup / Reset
 - [x]  + Reset the state of the DB
 - [x]  + Reset the state of the Farmer
 
