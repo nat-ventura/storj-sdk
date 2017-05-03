@@ -1,5 +1,7 @@
 #!/bin/env node
 
+console.log('starting watcher');
+
 var exec = require('child_process').exec;
 
 // On first start set variable to start state
@@ -34,6 +36,8 @@ function restartService(sn, callback) {
 
 // Loop forever and catch events until we're restarted
 function start() {
+  console.log('Service name is: ' + serviceName);
+
   process.on('SIGINT', function() {
     console.log("Got SIGINT. Exiting.");
 
