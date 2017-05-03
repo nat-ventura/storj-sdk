@@ -88,6 +88,12 @@ def get_options
     opts.on('-e', '--environment', 'Environment for which we are building our application') { |v| options[:build] = v }
     opts.on('-d', '--debug', 'Enable debug logging') { |v| options[:debug] = v }
 
+    # Development
+    opts.separator ''
+    opts.separator 'Development'
+
+    opts.on('-w', '--watch', 'Watch for changes and rebuild/restart container on changes') { |v| options[:watch] = true }
+
     # Tests & Benchmarking
     opts.separator ''
     opts.separator 'Testing ( coming soon... )'
@@ -397,6 +403,11 @@ def start
     else
       run_command("docker-compose logs -f #{options[:logs]}")
     end
+  end
+
+  # This should output whats happening with the watch
+  if options[:watch]
+    run_command('node ./scripts/watch_wrapper.js')
   end
 
   if options[:push]

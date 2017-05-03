@@ -34,6 +34,30 @@ var watchServices = [
     ],
     'watchExtensions': 'js dockerfile',
     'serviceRoot': 'bridge'
+  },
+  {
+    'name': 'share',
+    'watchPaths': [
+      './share/storjshare-daemon/'
+    ],
+    'watchExtensions': 'js dockerfile',
+    'serviceRoot': 'share'
+  },
+  {
+    'name': 'complex',
+    'watchPaths': [
+      './complex/complex/'
+    ],
+    'watchExtensions': 'js dockerfile',
+    'serviceRoot': 'complex'
+  },
+  {
+    'name': 'billing',
+    'watchPaths': [
+      './billing/billing/'
+    ],
+    'watchExtensions': 'js dockerfile',
+    'serviceRoot': 'billing'
   }
 ]
 
@@ -65,45 +89,18 @@ function start() {
   // Could require nodemon here and use that instead of spawn
   // Also can remove watch.sh from the pipeline and call watcher.js directly from here
   // Can turn the watched files into reusable variables
-    var watchBridgeGui = spawn('./scripts/watch.sh',
-      ['bridge-gui', 'bridge-gui']
-    );
-    var watchBridgeGuiVue = spawn('./scripts/watch.sh', ['bridge-gui-vue', 'bridge-gui']);
-    var watchBridge = spawn('./scripts/watch.sh', ['bridge', 'bridge']);
+    var watch = spawn('./scripts/watch.sh', [service.name, service.serviceRoot]);
 
-    watchBridgeGui.stdout.on('data', function(data) {
-      console.log('[info] [bridge-gui] ' + data.toString());
+    watch.stdout.on('data', function(data) {
+      console.log("[info] [%s] %s", service.name, data.toString());
     });
 
-    watchBridgeGui.stderr.on('data', function(data) {
-      console.log('[error] [bridge-gui] ' + data.toString());
+    watch.stderr.on('data', function(data) {
+      console.log("[error] [%s] %s", service.name,  data.toString());
     });
 
-    watchBridgeGui.on('exit', function(exitCode) {
-      console.log('[exit] [bridge-gui] Watcher exiting with code: ' + exitCode);
-    });
-
-    watchBridgeGuiVue.stdout.on('data', function(data) {
-      console.log('[info] [bridge-gui-vue] ' + data.toString());
-    });
-
-    watchBridgeGuiVue.stderr.on('data', function(data) {
-      console.log('[error] [bridge-gui-vue] ' + data.toString());
-    });
-
-    watchBridgeGuiVue.on('exit', function(exitCode) {
-      console.log('[exit] [bridge-gui-vue] Watcher exiting with code: ' + exitCode);
-    });
-
-    watchBridge.stdout.on('data', function(data) {
-      console.log('[info] [bridge] ' + data.toString());
-    });
-
-    watchBridge.stderr.on('data', function(data) {
-      console.log('[error] [bridge] ' + data.toString());
-    });
-    watchBridge.on('exit', function(exitCode) {
-      console.log('[exit] [bridge] Watcher exiting with code: ' + exitCode);
+    watch.on('exit', function(exitCode) {
+      console.log("[exit] [%s] Watcher exiting with code: %s", service.name, exitCode);
     });
   });
 }
