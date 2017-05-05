@@ -1,0 +1,14 @@
+{
+  "name": "storj-sdk",
+  "version": "0.0.1",
+  "description": "Storj SDK",
+  "scripts": {
+    "watch": "nodemon scripts/watch.js"
+  },
+  "devDependencies": {
+    "nodemon": "~1.3.8"
+  },
+  "dependencies": {
+
+  }
+}
