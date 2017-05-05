@@ -1,5 +1,9 @@
 'use strict';
 
+/*
+ * Credit and thanks to BlackDuck for this script
+ */
+
 const sync = require('synchronize');
 const fiber = sync.fiber;
 const await = sync.await;
