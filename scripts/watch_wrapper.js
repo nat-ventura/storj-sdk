@@ -1,10 +1,10 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 // This requires nodemon to be installed globally currently
 //
 // In the future, we will build this to run in a container and have control over
 // docker-compose from within the container
-var nodemon = require('nodemon');
+//var nodemon = require('nodemon');
 var spawn = require('child_process').spawn;
 
 var watcherPath = './scripts/watcher.js';

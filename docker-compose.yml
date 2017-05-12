@@ -4,12 +4,41 @@ services:
     build: ./cli
     command: ["/bin/sleep", "infinity"]
     image: storj-cli
-  db:
+  mongos:
     image: mongo:3.4.0
-    volumes:
-      - ./mongodb/data:/data/db
     ports:
       - "27017"
+    volumes:
+      - ./mongodb/files/scripts/start_mongos.sh:/usr/local/bin/start_mongos.sh
+    # need to do `sh.addShard('storjsdk/mongod:27018')`
+    #command: ['mongos', '--configdb', 'storjsdkcfg/mongoc:27019']
+    #command: ['/bin/sleep', 'infinity']
+    command: ['/usr/local/bin/start_mongos.sh']
+  mongoc:
+    image: mongo:3.4.0
+    volumes:
+      - ./mongodb/mongoc-data:/data/configdb
+      - ./mongodb/files/scripts/start_mongoc.sh:/usr/local/bin/start_mongoc.sh
+    ports:
+      - "27019"
+    # need to wrap start and rs.initiate() this if its not been done already
+    #command: ['mongod', '--configsvr', '--replSet', 'storjsdkcfg']
+    #command: ['/bin/sleep', 'infinity']
+    command: ['/usr/local/bin/start_mongoc.sh']
+  mongod:
+    image: mongo:3.4.0
+    volumes:
+      - ./mongodb/mongod-data:/data/db
+      - ./mongodb/files/scripts/start_mongod.sh:/usr/local/bin/start_mongod.sh
+    ports:
+      - "27018"
+    # need to wrap start and rs.initiate() this if its not been done already
+    # need to pass initiate a config setting a sane hostname `mongod` for the node
+    # need to set a hosts entry for this host `echo "172.19.0.10 mongod" >> /etc/hosts`
+    # find the ip in the env vars?
+    #command: ['mongod', '--shardsvr', '--replSet', 'storjsdk']
+    #command: ['/bin/sleep', 'infinity']
+    command: ['/usr/local/bin/start_mongod.sh']
   mq:
     image: rabbitmq:3.6.6
   bridge:
