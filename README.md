@@ -7,9 +7,15 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 
 ### Dependencies
 
+You'll need Ruby to run the `/.sdk` We recommend using rvm, which you can install with 
+
++ rvm ( `curl -sSL https://get.rvm.io | bash -s stable --ruby` )
+
 #### Required
 + jq ( `apt-get install jq` or `brew install jq` )
 + expect ( `apt-get install expect` or `brew install expect` )
++ highline ( `gem install highline` )
++ colorize ( `gem insatll colorize` )
 
 #### Optional
 + A VPN client (see below under Access Cluster) - Required for OSX and other systems that run the docker engine inside of a VM
