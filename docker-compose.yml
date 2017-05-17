@@ -111,7 +111,6 @@ services:
       - APOLLO_CLIENT_URL_VAL=https://billing-ssl-proxy
       - OUTPUT_PUBLIC_PATH_PROTOCOL_VAL=https
       - OUTPUT_PUBLIC_PATH_URL_VAL=bridge-gui-ssl-proxy
-    command: ["./dockerfiles/scripts/start-bridge-gui"]
   bridge-gui-ssl-proxy:
     image: storjlabs/nginx-ssl-proxy:latest
     environment:
