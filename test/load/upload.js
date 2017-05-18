@@ -20,13 +20,13 @@ const sleep = require('sleep');
 const cluster = require('cluster');
 
 // ##########   Config here
-const api = 'https://api.storj.io';
-const user = 'username';
+const api = process.env.STORJ_BRIDGE || 'https://api.storj.io';
+const user = 'email';
 const password = 'password';
 let uploads_per_user = 100;  // sum of all uploads to process
 let max_concurrent_uploads = 5;  // concurrent uploads per thread
 let workers = process.env.WORKERS || require('os').cpus().length + 1;  // thread count
-let upload_file_name = '/path/to/file.data';
+let upload_file_name = '/path/to/file.data'; // update this path before running the script
 const tmp_path = 'temp/'; // path for symlink and crypted data
 process.env.STORJ_TEMP = tmp_path;
 // #########
@@ -58,13 +58,12 @@ var do_upload = function(client, upload_file_name, bucket, callback) {
     var encrypter = new storj.EncryptStream(secret);
 
     var randompart = randomstring();
-    var filepath = tmp_path + '/tmp_' + randompart + '.data';
+    var filepath = tmp_path + 'tmp_' + randompart + '.data';
     fs.symlink(upload_file_name, filepath, function () {});
 
-    var tmppath = tmp_path + '/tmp_' + randompart + '.crypt';
+    var tmppath = tmp_path + 'tmp_' + randompart + '.crypt';
 
     sleep.msleep(500);
-
     fs.createReadStream(filepath)
         .pipe(encrypter)
         .pipe(fs.createWriteStream(tmppath)).on('finish', function (err) {
@@ -141,7 +140,7 @@ if (cluster.isMaster) {
 
     for (let i = 0; i < workers; ++i) {
         let worker = cluster.fork().process;
-        logger.log.error('worker %s started.', worker.pid);
+        logger.log.info('worker %s started.', worker.pid);
     }
 
     cluster.on('exit', function(worker) {
