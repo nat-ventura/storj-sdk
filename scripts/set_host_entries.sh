@@ -3,12 +3,13 @@
 # add a host entry for it
 
 NET_NAME=$(./scripts/get_net_name.sh)
+COMPOSE_PREFIX=$(./scripts/get_compose_prefix.sh)
 
 echo "If changes need to be made to your /etc/hosts file, you may be asked for your sudo password..."
 echo "Always check scripts to ensure that you know what they are doing before entering your password."
 
 for SERVICE in bridge-gui bridge bridge-gui-ssl-proxy bridge-ssl-proxy billing billing-ssl-proxy bridge-gui-vue db; do
-  CONTAINER_ID=$(docker ps | grep storjsdk_${SERVICE}_1 | cut -d " " -f1)
+  CONTAINER_ID=$(docker ps | grep ${COMPOSE_PREFIX}_${SERVICE}_1 | cut -d " " -f1)
   SERVICE_IP=$(docker inspect $CONTAINER_ID | jq -r ".[0].NetworkSettings.Networks.$NET_NAME.IPAddress")
 
   echo "Checking to see if the $SERVICE hosts entry exists in your hosts file"

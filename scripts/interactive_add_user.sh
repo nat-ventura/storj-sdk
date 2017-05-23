@@ -4,6 +4,8 @@
 STORJ_BRIDGE_USERNAME=user@storj.io
 STORJ_BRIDGE_PASSWORD=password
 
+COMPOSE_PREFIX=$(./scripts/get_compose_prefix.sh)
+
 # Should set these to use defaults if you press enter at the prompts
 echo "Please register a test user. (do not use an important password!)"
 echo -n "Email: "
@@ -33,6 +35,6 @@ export STORJ_BRIDGE=$(./scripts/get_local_bridge.sh)
 echo "Activating user $USERNAME"
 
 # You could use this to activate a user
-docker exec -it storjsdk_db_1 /bin/bash -c "mongo localhost:27017/storj-sandbox --eval 'db.users.update({_id: \"$USERNAME\"}, {\$set:{\"activated\": true}});'" > /dev/null 2>&1
+docker exec -it ${COMPOSE_PREFIX}_db_1 /bin/bash -c "mongo localhost:27017/storj-sandbox --eval 'db.users.update({_id: \"$USERNAME\"}, {\$set:{\"activated\": true}});'" > /dev/null 2>&1
 
 storj login
