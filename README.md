@@ -49,7 +49,9 @@ To bring up the cluster locally, we use docker-compose.
 To bring up the cluster in the background
 + `docker-compose up -d`
 
-### 3) Access Cluster (OSX Only)
+### 3) Access Cluster
+
+#### VPN (OSX Only)
 To access your cluster (from OSX) you'll need to install an OpenVPN compatible VPN client.
 If you want to use the VPN in Linux for any reason, you'll want to check the box telling your VPN client not to route all traffic through this VPN, only traffic destined for subnets that it controls.
 
@@ -63,6 +65,16 @@ To use the CLI, you'll need to set the `STORJ_BRIDGE` environment variable to th
 
 From the root of the sdk, run the following command:
 `. scripts/setbr`
+
+#### Database
+`docker run -it --network storjsdk_default --entrypoint mongo mongo mongodb://db:27017`
+
+or
+
+```
+./scripts/get_local_db.sh
+```
+... then use that IP and Port to connect to the mongo instance like you normally would any other mongodb host.
 
 ##### Behind the Scenes
 To use the local bridge you'll need to either export the `STORJ_BRIDGE` environment variable or preface your storj command with STORJ_BRIDGE=[local_bridge] replacing [local_bridge] with the bridge address.
