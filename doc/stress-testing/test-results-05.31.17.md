@@ -1,10 +1,16 @@
 # Stress Test May 31st 2017
 
 ##  Renter Proxy
-Started hitting point where worker_connections are not enough
+
+#### Started hitting point where worker_connections are not enough
 ```
 2017/05/31 16:39:29 [alert] 7#7: *1229428 6114 worker_connections are not enough while connecting to upstream, client: 10.128.0.7, server: ~^(?<hname>[a-zA-Z0-9\-]+)\.renters\.(?<env>[a-zA-Z0-9\-]+)\.storj\.io$, request: "POST / HTTP/1.1", upstream: "http://10.246.47.181:8400/", host: "renter-64.renters.prod.storj.io:8400"
 ```
+
+#### Possibly need to add healthcheck for renters
+
+Might need to scale up kube-dns container? kube-dns-autoscaler ? https://kubernetes.io/docs/tasks/administer-cluster/dns-horizontal-autoscaling/
+
 
 ## Renter
 + with just under 400 renters, we were getting shards per second (upload) 60/s ok, 200/s breaks
@@ -47,19 +53,15 @@ events.js:160
 #### Should we add configuration to the maxOffers number for the renters?
 + https://github.com/Storj/complex/blob/master/lib/renter.js#L569>
 
-How do we calculate how many renters that we need based on the network size?
+#### How do we calculate how many renters that we need based on the network size?
 + Renters can handle X number of offers/s (currently maxOffers: 24 (hard coded))
 + Farmers can handle X number of offers/s
 + Network size is X big
 + Peak load expected is X
 + Normal usage is X
 
-Need to be able to scale renters much faster
-
-## Renter Proxy
-Possibly need to add healthcheck for renters
-
-Might need to scale up kube-dns container? kube-dns-autoscaler ? https://kubernetes.io/docs/tasks/administer-cluster/dns-horizontal-autoscaling/
+#### Need to be able to scale renters much faster
+Will be moving to deployment in kubernetes in place of statefulsets. Will need to design a way to have unique IP's or ports provided to each pod on startup. Will likely have to use a sidecar pod to control this.
 
 ## Database
 #### Should we set readpreference to secondary?
