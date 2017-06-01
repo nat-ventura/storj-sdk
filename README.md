@@ -15,7 +15,7 @@ You'll need Ruby to run the `/.sdk` We recommend using rvm, which you can instal
 + jq ( `apt-get install jq` or `brew install jq` )
 + expect ( `apt-get install expect` or `brew install expect` )
 + highline ( `gem install highline` )
-+ colorize ( `gem insatll colorize` )
++ colorize ( `gem install colorize` )
 
 #### Optional
 + A VPN client (see below under Access Cluster) - Required for OSX and other systems that run the docker engine inside of a VM
