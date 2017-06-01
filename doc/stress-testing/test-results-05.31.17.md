@@ -56,6 +56,21 @@ How do we calculate how many renters that we need based on the network size?
 
 Need to be able to scale renters much faster
 
+#### Renter warn/error logs analysis
+`kubernetes.container_name.raw: "renter" AND environment: "production" AND (level: "error" OR level: "warn") AND (message: "missing or empty reply from contact" OR message: \/rpc call .* timed out\/ OR message: \/dropping received late response\/) AND kubernetes.pod: "renter-42"`
+
+This renter within less than 1 second logged 18 `rpc call <id> timed out` messages.
+In the next ~15 seconds it logged 13 `dropping received late response to <id>` messages and 9 `missing or empty reply from contact` messages. This was around 3pm EST during the stress test, but similar behavior can be seen at all times.
+
+All `dropping received late response to <id>` logs corresponded with an `rpc call <id> timed out` log. The dropping log usually occurred within 1-15 seconds of the timeout log. Not every timeout log corresponded to a dropping log (but most did). Maybe the timeouts that did not correspond with a dropping log corresponded to a `missing or empty reply` log.
+
+It seems like all the timeouts happen at almost the same time, followed by the dropping/missing logs, and this repeats. In other words, dropping/missing logs are not mixed in with timeout logs; they alternate.
+
+Farmers have similar behavior, but `missing or empty reply from contact` is much more common than `droping received late response`.
+
+We have run into similar behavior testing locally with the SDK.
+
+
 ## Renter Proxy
 Possibly need to add healthcheck for renters
 
