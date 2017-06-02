@@ -173,6 +173,8 @@ git config remote.origin.pushurl git://github.com/storj/core
 ```
 This will add the module such that anyone can pull from git but at the same time, anyone with push permissions will be able to do so.
 
+Make sure the new directory name matches the directory that would appear in a project's `node_modules` folder. For instance, if you were adding `https://github.com/Storj/mongodb-adapter`, the submodule would actually need to be placed in `vendor/storj-mongodb-adapter`.
+
 Remove a submodule but leave it in `.gitmodules` so that you can pull it back in later
 (first ensure that there are no uncomitted changes to the repository)
 ```
