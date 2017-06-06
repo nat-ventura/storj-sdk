@@ -83,3 +83,54 @@ It looks as if the kubernetes dns service might have been struggling to keep up 
 + How do we reduce or reuse the number of requests on the network
 + Do queue messages increase when adding more renters?
   + If so, does that increase messages to the network also? Duplicates?
+
+
+
+
+## FileZilla Launch Planning Meeting Notes
+
+### In attendance
+  + Philip Hutchins
+  + Braydon Fuller
+  + Gordon
+  + Bryan
+  + Dylan
+  + Patrick
+  + Moby
+  + Alex
+  + John
+
+###
+  + Someone to look into doing cleanup on the db over time ( mirrors and exchange reports ) (patrick)
+    + All mirrors that have established to false
+    + older than a few weeks
+    + can delete
+    + what do we not need to write to the DB?
+  + Someone to look into keeping us from getting broken from bad things that stress testers are doing (alex)
+    + Avoid attacks ? (alex)
+    + if you only have one shard you can't have smaller than x
+  + Renters return connection refused (gordon (maybe braydon & someone else? if needed))
+    + Making renters be able to be load balanced (braydon has ideas and can get down on paper? gordon?)
+    + offers don't need to be sent to stream?
+    + why can't renters handle anyone elses requests?
+  + Farmers stop working after a while? (moby)
+  + Rabbitmq and mongodb disconnect (moby)
+  + Testing filezilla itself (shawn?)
+    + Compile on osx
+  + Add our own backup farmers (later)
+    + whitelist or have them start accepting offers (on capacity)
+  + Check timeouts and why they timeout? (Moby? Alex?)
+    + determine when users get slow
+      + if the network is busy or not busy?
+      + exchange reports?
+    + Dedupe IP's and only allow farmers to have X nodes from one IP?
+    + Adding logging to see whats going on at bad times
+    + Health on farmres?
+  + Avoid users setting up way too many farmers on single node
+  + Exposing the data for network slowness on dashboard?
+  + measurements
+    + Upload requests
+    + download requests
+    + response times for nginx logs (talk to braydon for details)
+  + Get bryan and barbara's stuff out (patrick and braydon)
+
