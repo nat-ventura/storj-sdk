@@ -7,11 +7,11 @@
     "mongoUrl": "mongodb://db:27017/storj-sandbox",
     "mongoOpts": {},
     "networkPrivateExtendedKey": "/root/hd-private.key",
-    "networkIndex": 1,
+    "networkIndex": {{ NETWORK_INDEX }},
     "totalRenters": 1,
     "renterOverlap": 0,
     "networkOpts": {
-      "rpcPort": 4000,
+      "rpcPort": 80,
       "rpcAddress": "renter-proxy",
       "doNotTraverseNat": true,
       "tunnelServerPort": 5000,

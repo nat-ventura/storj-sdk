@@ -121,19 +121,21 @@ else
   echo "Config file link exists."
 fi
 
+echo "Running command: $@"
+
 /bin/bash -c -- "$@"
 
-FARMER_LOGS="/var/log/storj.farmer.log"
+#FARMER_LOGS="/var/log/storj.farmer.log"
 
-COUNTER=0
-while [ ! -f "${FARMER_LOGS}" ]; do
-  sleep 1;
-  ((COUNTER+=1))
+#COUNTER=0
+#while [ ! -f "${FARMER_LOGS}" ]; do
+#  sleep 1;
+#  ((COUNTER+=1))
+#
+#  if [[ "${COUNTER}" -eq 1000 ]]; then
+#    echo "Didn't find log file: ${FARMER_LOGS}"
+#    exit 1;
+#  fi
+#done
 
-  if [[ "${COUNTER}" -eq 10 ]]; then
-    echo "Didn't find log file: ${FARMER_LOGS}"
-    exit 1;
-  fi
-done
-
-tail -f "${FARMER_LOGS}"
+#tail -f "${FARMER_LOGS}"

@@ -54,29 +54,32 @@ services:
   landlord:
     build: ./complex
     volumes:
-      - ./complex/landlord.config.json:/root/config.template.json
-    command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
+      - ./complex/templates/landlord.config.template.json:/etc/storj/complex.config.template.json
+    command: ["./bin/storj-complex.js", "-c", "/etc/storj/complex.config.json"]
     environment:
       - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
   renter-proxy:
     image: dockercloud/haproxy
+    environment:
+      HEALTH_CHECK: ""
     links:
       - renter
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "4000"
+      - "80"
+      - "1936"
   renter:
     build: ./complex
     volumes:
-      - ./complex/renter.config.json:/root/config.template.json
+      - ./complex/templates/renter.config.template.json:/etc/storj/complex.config.template.json
       - ./complex/hd-private.key:/root/hd-private.key
-    command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
+    command: ["./bin/storj-complex.js", "-c", "/etc/storj/complex.config.json"]
     environment:
       - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
     restart: on-failure
     ports:
-      - "4000"
+      - "80"
   share:
     build: ./share
     volumes:
@@ -84,7 +87,6 @@ services:
       - ./share/templates:/share/templates
       - ./vendor:/usr/src/vendor
     environment:
-      - DOCKER_SERVICES=renter:4000
       - affinity:container!=/cadvisor/
     ports:
       - "9000"

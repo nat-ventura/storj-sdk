@@ -12,11 +12,11 @@
   "maxOfferConcurrency": 9007199254740991,
   "bridgeUri": "http://bridge:8080",
   "seedList": [
-    "storj://renter:4000/337472da3068fa05d415262baf4df5bada8aefdc"
+    "storj://renter-proxy:80/a5e785e2e6492142bebf14419ea2f6568e5c136c"
   ],
   "rpcAddress": "{{ IP }}",
   "renterWhitelist": [
-    "337472da3068fa05d415262baf4df5bada8aefdc"
+    "a5e785e2e6492142bebf14419ea2f6568e5c136c"
   ],
   "rpcPort": 9000,
   "doNotTraverseNat": true,
@@ -33,7 +33,7 @@
   "offerBackoffLimit": 9007199254740991,
   "networkPrivateKey": "{{ PRIVATE_KEY }}",
   "loggerVerbosity": 4,
-  "loggerOutputFile": "/var/log/storj.farmer.log",
+  "loggerOutputFile": "/var/log/",
   "storagePath": "{{ STORAGE_PATH }}",
   "storageAllocation": "5GB",
   "enableTelemetryReporting": false
