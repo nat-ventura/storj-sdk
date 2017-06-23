@@ -10,10 +10,6 @@
 	path = cli/core-cli
 	url = https://github.com/storj/core-cli
   pushurl = git@github.com:Storj/core-cli.git
-[submodule "vendor/storj-lib"]
-	path = vendor/storj-lib
-	url = https://github.com/storj/core
-  pushurl = git@github.com:Storj/core.git
 [submodule "bridge/bridge"]
 	path = bridge/bridge
 	url = https://github.com/storj/bridge
@@ -38,3 +34,6 @@
 	path = cli/libstorj
   url = https://github.com/Storj/libstorj
   pushurl = git@github.com:Storj/libstorj.git
+[submodule "storj-lib"]
+	path = vendor/storj-lib
+	url = https://github.com/storj/core
