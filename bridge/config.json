@@ -1,7 +1,16 @@
 {
   "storage": {
-    "mongoUrl": "mongodb://db:27017/storj-sandbox",
-    "mongoOpts": {}
+    "mongoUrl": "mongodb://mongos:27017/bridge",
+    "mongoOpts": {
+      "ssl": true,
+      "user": "storj",
+      "pass": "password",
+      "mongos": {
+        "ssl": true,
+        "sslValidate": false,
+        "checkServerIdentity": false
+      }
+    }
   },
   "server": {
     "host": "0.0.0.0",

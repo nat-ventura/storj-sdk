@@ -9,5 +9,5 @@ NET_NAME=$(./scripts/get_net_name.sh)
 DB_IP=$(docker inspect $DB_CONTAINER_ID | jq -r ".[0].NetworkSettings.Networks.$NET_NAME.IPAddress")
 
 # Need to add user, pass, SSL, allowInvalidHostnames, and sslAllowInvalidCertificates to the connection URI
-DB_URL=mongodb://$DB_IP:$DB_PORT
+DB_URL=$DB_IP:$DB_PORT
 echo $DB_URL

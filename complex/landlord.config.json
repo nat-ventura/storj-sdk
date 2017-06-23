@@ -4,8 +4,17 @@
     "logLevel": 4,
     "amqpUrl": "amqp://mq",
     "amqpOpts": {},
-    "mongoUrl": "mongodb://db:27017/storj-sandbox",
-    "mongoOpts": {},
+    "mongoUrl": "mongodb://mongos:27017/bridge",
+    "mongoOpts": {
+      "ssl": true,
+      "user": "storj",
+      "pass": "password",
+      "mongos": {
+        "ssl": true,
+        "allowInvalidCertificates": true,
+        "allowInvalidHostnames": true
+      }
+    },
     "serverPort": 8081,
     "serverOpts": {
       "certficate": null,

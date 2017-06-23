@@ -10,34 +10,28 @@ services:
       - "27017"
     volumes:
       - ./mongodb/files/scripts/start_mongos.sh:/usr/local/bin/start_mongos.sh
-    # need to do `sh.addShard('storjsdk/mongod:27018')`
-    #command: ['mongos', '--configdb', 'storjsdkcfg/mongoc:27019']
-    #command: ['/bin/sleep', 'infinity']
+      - ./mongodb/files/ssl/mongodb.pem:/etc/mongodb.pem
     command: ['/usr/local/bin/start_mongos.sh']
+    depends_on:
+      - "mongoc"
+      - "mongod"
   mongoc:
     image: mongo:3.4.0
     volumes:
-      - ./mongodb/mongoc-data:/data/configdb
+      - ./mongodb/data/mongoc:/data/configdb
       - ./mongodb/files/scripts/start_mongoc.sh:/usr/local/bin/start_mongoc.sh
+      - ./mongodb/files/ssl/mongodb.pem:/etc/mongodb.pem
     ports:
       - "27019"
-    # need to wrap start and rs.initiate() this if its not been done already
-    #command: ['mongod', '--configsvr', '--replSet', 'storjsdkcfg']
-    #command: ['/bin/sleep', 'infinity']
     command: ['/usr/local/bin/start_mongoc.sh']
   mongod:
     image: mongo:3.4.0
     volumes:
-      - ./mongodb/mongod-data:/data/db
+      - ./mongodb/data/mongod:/data/db
       - ./mongodb/files/scripts/start_mongod.sh:/usr/local/bin/start_mongod.sh
+      - ./mongodb/files/ssl/mongodb.pem:/etc/mongodb.pem
     ports:
       - "27018"
-    # need to wrap start and rs.initiate() this if its not been done already
-    # need to pass initiate a config setting a sane hostname `mongod` for the node
-    # need to set a hosts entry for this host `echo "172.19.0.10 mongod" >> /etc/hosts`
-    # find the ip in the env vars?
-    #command: ['mongod', '--shardsvr', '--replSet', 'storjsdk']
-    #command: ['/bin/sleep', 'infinity']
     command: ['/usr/local/bin/start_mongod.sh']
   mq:
     image: rabbitmq:3.6.6
@@ -47,7 +41,7 @@ services:
       - ./bridge/config.json:/bridge/config.json
       - ./vendor:/usr/src/vendor
     environment:
-      - DOCKER_SERVICES=db:27017
+      - DOCKER_SERVICES=mongos:27017
     ports:
       - "8080"
   billing:
@@ -57,8 +51,12 @@ services:
     volumes:
       - ./vendor:/usr/src/vendor
     environment:
-      DOCKER_SERVICES: "db:27017"
-      MONGO_URL: "mongodb://db:27017/storj-sandbox"
+      DOCKER_SERVICES: "mongos:27017"
+      MONGO_URL: "mongodb://mongos:27017/bridge"
+      MONGO_USERNAME: "storj"
+      MONGO_PASSWORD: "password"
+      MONGOS: "{\"ssl\": true,\"checkServerIdentity\": false,\"sslValidate\": false}"
+      MONGO_SSL: "true"
       LOG_LEVEL: "4"
     ports:
       - "3000"
@@ -69,8 +67,8 @@ services:
     volumes:
       - ./vendor:/usr/src/vendor
     environment:
-      DOCKER_SERVICES: "db:27017,billing:3000"
-      MONGO_URL: "mongodb://db:27017/storj-sandbox"
+      DOCKER_SERVICES: "mongos:27017,billing:3000"
+      MONGO_URL: "mongodb://mongos:27017/bridge"
       BILLING_URL: "http://billing:3000"
       LOG_LEVEL: "4"
   redis:
@@ -86,7 +84,7 @@ services:
       - ./complex/landlord.config.json:/root/config.template.json
     command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
     environment:
-      - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
+      - DOCKER_SERVICES=bridge:8080,mongos:27017,mq:5672
   renter:
     build: ./complex
     volumes:
@@ -94,7 +92,7 @@ services:
       - ./complex/hd-private.key:/root/hd-private.key
     command: ["./bin/storj-complex.js", "-c", "/root/config.json"]
     environment:
-      - DOCKER_SERVICES=bridge:8080,db:27017,mq:5672
+      - DOCKER_SERVICES=bridge:8080,mongos:27017,mq:5672
     restart: on-failure
     ports:
       - "4000"

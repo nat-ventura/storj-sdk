@@ -3,3 +3,5 @@
 .idea/*
 docker-compose.override.yml*
 node_modules/*
+mongodb/mongoc-data/*
+mongodb/mongod-data/*
