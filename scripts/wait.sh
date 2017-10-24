@@ -7,14 +7,14 @@ if [ -n "$DOCKER_SERVICES" ]; then
     PORT="$(echo "$service" | sed 's/:/ /g' | awk '{ print $2 }')"
     echo "Waiting for $HOST to resolve"
     until getent hosts "$HOST"; do
-      sleep 1
+      sleep 3
     done
     IP="$(getent hosts "$HOST" | awk '{ print $1 }')"
     echo "Resolved $HOST to $IP!"
     echo "Waiting for $PORT on $IP"
     until exec 6<>"/dev/tcp/$IP/$PORT"; do
       6<&-
-      sleep 1
+      sleep 3
     done
     6<&-
     echo "$IP:$PORT is up!"

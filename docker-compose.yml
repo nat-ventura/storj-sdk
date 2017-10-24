@@ -1,9 +1,9 @@
 version: "2"
 services:
-  cli:
-    build: ./cli
-    command: ["/bin/sleep", "infinity"]
-    image: storj-cli
+  #cli:
+  #  build: ./cli
+  #  command: ["/bin/sleep", "infinity"]
+  #  image: storj-cli
   db:
     image: mongo:3.4.0
     volumes:
@@ -93,6 +93,8 @@ services:
       - ./vpn:/local
       - ./vpn/config:/etc/openvpn
     network_mode: host
+    depends_on:
+      - "proxy"
     cap_add:
       - NET_ADMIN
     environment:
