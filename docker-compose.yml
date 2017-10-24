@@ -142,13 +142,15 @@ services:
     ports:
       - "6379"
   bridge-gui-vue-build:
-    build: ./bridge-gui/bridge-gui-vue
+    build:
+      context: ./bridge-gui/bridge-gui-vue
+      dockerfile: ./dockerfiles/build.dockerfile
     volumes:
       - ./bridge-gui/bridge-gui-vue/dist:/opt/bridge-gui-vue/dist
   bridge-gui-vue:
     build:
-      context: ./bridge-gui
-      dockerfile: ./bridge-gui-vue.dockerfile
+      context: ./bridge-gui/bridge-gui-vue
+      dockerfile: ./dockerfiles/serve.dockerfile
     depends_on:
       - "bridge-gui-vue-build"
     ports:
