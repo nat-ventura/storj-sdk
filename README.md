@@ -7,7 +7,7 @@ The Storj Developer Kit is designed to enable both Team Members at Storj Labs an
 
 ### Dependencies
 
-You'll need Ruby to run the `/.sdk` We recommend using rvm, which you can install with 
+You'll need Ruby to run the `/.sdk` We recommend using rvm, which you can install with
 
 + rvm ( `curl -sSL https://get.rvm.io | bash -s stable --ruby` )
 
@@ -169,7 +169,7 @@ Add a submodule that has not been added to the `.gitmodules` file yet
 ```
 git submodule add --name storj-lib https://github.com/storj/core vendor/storj-lib
 cd vendor/storj-lib
-git config remote.origin.pushurl git://github.com/storj/core
+git config remote.origin.pushurl git@github.com:Storj/core.git
 ```
 This will add the module such that anyone can pull from git but at the same time, anyone with push permissions will be able to do so.
 
