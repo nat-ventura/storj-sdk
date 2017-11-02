@@ -3,6 +3,17 @@ Storj Developer Kit
 
 The Storj Developer Kit is designed to enable both Team Members at Storj Labs and Community Members alike to quickly set up a fully working, complete and consistent environment with which to develop, test and experiment.
 
+## Table of Contents
+* [Setup](#setup)
+* [Developing](#developing)
+* [Contributing](#contributing)
+* [Note: SDK Under Heavy Development](#sdk-under-heavy-development)
+* [Usage](#usage)
+* [Using the CLI for Local Setup](#using-the-cli-for-local-setup)
+* [Spec: Directory Structure and Dockerfiles](#spec)
+* [Implementation Tasks](#implementation)
+* [Known Issues](#known-issues)
+
 ## Setup
 
 ### Dependencies
@@ -107,8 +118,8 @@ To access the local bridge via ssl, you will need to have run the `set_host_entr
 [http://bridge](http://bridge)
 
 
-## Try it Out
-Test your conneciton to the bridge and its supporting services
+### Try it Out
+Test your connection to the bridge and its supporting services
 
 ```
 storj add-bucket superawesomebucket
@@ -281,13 +292,11 @@ Please excuse our mess while we gather our thoughts. This SDK is under active de
 + Saving the state of your configuration (push to a branch)
 + Sharing your configuration with someone else (allow another user to create their own branch based on yours or to simply pull the versions of software that you are using without changing anything else)
 
-### Using the CLI against local setup
-Configuration
--------------
+## Using the CLI for Local Setup
+### Configuration
 `$ export STORJ_BRIDGE=http://localhost:8080`
 
-Register & Login
------
+### Register & Login
 `$ storj register`
 follow the prompts
 
@@ -314,26 +323,24 @@ Use storj cli as usual
 #### Dockerfiles
 If at all possible, we should only create one Dockerfile per project or service. Using a different Dockerfile between development and production should be avoided as this will create differences in the build that is used to test and the one that will be shipped to production.
 
-### Startup Scripts
+#### Startup Scripts
 In order to include vendored modules, a wrapper startup script needs to be used. The Dockerfile in the project should contain the CMD to start the service. The docker-compose configuration file should override this to employ the wait script as well as execute the script to copy vendored modules.
 
-### Template Parsing
+#### Template Parsing
 Templates are parsed by a bash script that recursively replaces instances of environment variable name with that environment variable names contents. This allows for being able to inject variables at build time or (with the seame variables/system) find and replace them at container start time. Using these variables at container start time is required for being able to inject secrets via env variable.
 
-### Build & Test
+#### Build & Test
 Adding a Jenkins file to the root level of the projects repository will allow for creation of a pipeline in the Storj automated build system.
 
 ### Dockerfiles
 
-Supporting Containers
----------------------
+#### Supporting Containers
   + The SDK should contain the base and dependencies dockerfiles
 
-Service Containers
-------------------
+#### Service Containers
   + Dockerfile should live in each code repository
 
-### Storj Services
+#### Storj Services
 + Each service repository should be Git submoduled into the SDK
 
 
